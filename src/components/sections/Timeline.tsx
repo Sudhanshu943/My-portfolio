@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { timeline } from '@/data/timeline';
+import { timeline } from '../data/timeline';
 
 export default function Timeline() {
   return (

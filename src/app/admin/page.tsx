@@ -2,7 +2,7 @@
 
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState } from 'react';
-import { config as defaultConfig } from '@/data/config';
+import { config as defaultConfig } from '../data/config';
 
 export default function Admin() {
   const { data: session, status } = useSession();
