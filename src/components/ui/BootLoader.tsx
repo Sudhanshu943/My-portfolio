@@ -30,7 +30,7 @@ export default function BootLoader({ onComplete }: BootLoaderProps) {
             setPhase(phase + 1);
           }, 1000);
         }
-      }, 50);
+      }, 40);
       return () => clearInterval(interval);
     } else {
       setTimeout(onComplete, 1000);
