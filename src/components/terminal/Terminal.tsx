@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { config } from '../data/config';
-import { projects } from '../data/projects';
-import { skills } from '../data/skills';
-import { timeline } from '../data/timeline';
+import { config } from '@/data/config';
+import { projects } from '@/data/projects';
+import { skills } from '@/data/skills';
+import { timeline } from '@/data/timeline';
 
 interface Line {
   type: 'input' | 'output';

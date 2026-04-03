@@ -2,9 +2,10 @@
 
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState } from 'react';
-import { config as defaultConfig } from '../data/config';
+import { config as defaultConfig } from '@/data/config';
+import Providers from '@/components/Providers';
 
-export default function Admin() {
+function AdminContent() {
   const { data: session, status } = useSession();
   const [config, setConfig] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -74,7 +75,6 @@ export default function Admin() {
               })}
               className="w-full p-2 bg-gray-900 border border-primary/20 text-white"
             />
-            {/* Add other fields similarly */}
             <button
               onClick={saveConfig}
               className="px-4 py-2 bg-primary text-black font-mono hover:bg-primary/80"
@@ -91,5 +91,13 @@ export default function Admin() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function Admin() {
+  return (
+    <Providers>
+      <AdminContent />
+    </Providers>
   );
 }

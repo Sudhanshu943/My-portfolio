@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { projects } from '../data/projects';
+import { projects } from '@/data/projects';
 import { ExternalLink, GitBranch } from 'lucide-react';
 
 export default function Projects() {

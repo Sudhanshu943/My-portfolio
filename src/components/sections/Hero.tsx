@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { config } from '../data/config';
+import { config } from '@/data/config';
 
 export default function Hero() {
   const [currentText, setCurrentText] = useState('');
