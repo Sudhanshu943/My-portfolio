@@ -2,13 +2,25 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { config } from '@/data/config';
-import { projects } from '@/data/projects';
-import { skills } from '@/data/skills';
 import { timeline } from '@/data/timeline';
 
 interface Line {
   type: 'input' | 'output';
   text: string;
+}
+
+interface Project {
+  title: string;
+  problem: string;
+  approach: string;
+  techStack: string[];
+  outcome: string;
+  github: string;
+  demo: string | null;
+}
+
+interface SkillsData {
+  [key: string]: { name: string; level: number }[];
 }
 
 export default function Terminal() {
@@ -19,11 +31,15 @@ export default function Terminal() {
   const [typingOutput, setTypingOutput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [skills, setSkills] = useState<SkillsData>({});
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
+    fetch('/api/projects').then(res => res.json()).then(setProjects);
+    fetch('/api/skills').then(res => res.json()).then(setSkills);
   }, []);
 
   const addOutput = (text: string) => {
@@ -53,13 +69,13 @@ export default function Terminal() {
         break;
       case 'skills':
         const skillText = Object.entries(skills)
-          .map(([cat, list]) => `${cat.toUpperCase()}: ${list.join(', ')}`)
+          .map(([cat, list]) => `${cat.toUpperCase()}: ${list.map(s => s.name).join(', ')}`)
           .join('\n');
         addOutput(skillText);
         break;
       case 'projects':
         const projectText = projects
-          .map(p => `${p.title}: ${p.description} (${p.techStack.join(', ')})`)
+          .map(p => `${p.title}: ${p.problem} (${p.techStack.join(', ')})`)
           .join('\n');
         addOutput(projectText);
         break;

@@ -8,4 +8,10 @@ export const config = {
     email: "sudhanshuthapa8@gmail.com",
   },
   resume: "/resume.pdf",
+  resumeLastUpdated: "2024-10-01",
+  currentFocus: {
+    learning: ["Web Security", "Forensics"],
+    next: ["Reverse Engineering", "Malware Analysis"]
+  },
+  securityMindset: "I focus on understanding systems deeply, preferring manual analysis over automated tools. My approach emphasizes problem-solving, documentation, and continuous learning in cybersecurity.",
 };

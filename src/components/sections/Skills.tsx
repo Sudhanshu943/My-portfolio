@@ -1,36 +1,59 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { skills } from '@/data/skills';
+import { useState, useEffect } from 'react';
+
+interface Skill {
+  name: string;
+  level: number;
+}
+
+interface SkillsData {
+  [key: string]: Skill[];
+}
 
 export default function Skills() {
+  const [skills, setSkills] = useState<SkillsData>({});
+
+  useEffect(() => {
+    fetch('/api/skills')
+      .then(res => res.json())
+      .then(setSkills);
+  }, []);
+
   return (
-    <section id="skills" className="py-16 px-4">
+    <section id="skills" className="py-20 px-4">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-mono text-primary mb-8 text-center">SKILLS DASHBOARD</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="text-3xl font-mono text-primary mb-12 text-center"
+        >
+          SKILLS
+        </motion.h2>
+        <div className="space-y-8">
           {Object.entries(skills).map(([category, skillList], catIndex) => (
             <motion.div
               key={category}
-              initial={{ opacity: 0, x: catIndex % 2 === 0 ? -50 : 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: catIndex * 0.2 }}
-              className="bg-gray-900 border border-primary/20 rounded p-6"
+              className="max-w-2xl mx-auto"
             >
-              <h3 className="text-xl font-mono text-secondary mb-4 uppercase">{category}</h3>
-              <div className="space-y-3">
+              <h3 className="text-xl font-mono text-secondary mb-6 uppercase">{category}</h3>
+              <div className="space-y-4">
                 {skillList.map((skill, index) => (
                   <div key={index}>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-300">{skill.name}</span>
-                      <span className="text-primary">{skill.level}%</span>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-gray-300 font-mono">{skill.name}</span>
+                      <span className="text-primary font-mono">{skill.level}%</span>
                     </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-gray-800 rounded-sm h-3">
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${skill.level}%` }}
-                        transition={{ delay: catIndex * 0.2 + index * 0.1, duration: 1 }}
-                        className="bg-primary h-2 rounded-full"
+                        transition={{ delay: catIndex * 0.2 + index * 0.1, duration: 1.5, ease: 'easeOut' }}
+                        className="bg-primary h-3 rounded-sm"
                       />
                     </div>
                   </div>

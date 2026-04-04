@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Secure File Encryption App",
+    "problem": "Need secure file sharing without relying on third-party services",
+    "approach": "Developed web app using Node.js backend with AES-256 encryption, implemented client-side key derivation",
+    "techStack": [
+      "JavaScript",
+      "Node.js",
+      "Crypto API"
+    ],
+    "outcome": "Enabled secure file exchange for team, processed 500+ files with zero data breaches",
+    "github": "https://github.com/alexjohnson/file-encryptor",
+    "demo": "https://file-encryptor-demo.vercel.app"
+  },
+  {
+    "title": "Password Strength Analyzer",
+    "problem": "Weak passwords remain top cause of account compromises",
+    "approach": "Created CLI tool using regex patterns and entropy calculations to evaluate passwords against common attacks",
+    "techStack": [
+      "Python",
+      "Regex",
+      "Hashlib"
+    ],
+    "outcome": "Analyzed 1000+ passwords, improved organizational password policy reducing breaches by 40%",
+    "github": "https://github.com/alexjohnson/password-analyzer",
+    "demo": null
+  }
+]
