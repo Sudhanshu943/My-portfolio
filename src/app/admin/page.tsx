@@ -7,7 +7,8 @@ export default async function AdminPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect('/');
+    redirect('/api/auth/signin?callbackUrl=/admin');
+    return null;
   }
 
   if (session.user?.email !== process.env.ADMIN_EMAIL) {

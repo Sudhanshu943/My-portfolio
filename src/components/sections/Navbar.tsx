@@ -1,12 +1,14 @@
 'use client';
 
-import Image from 'next/image';
+import { signIn, signOut, useSession } from 'next-auth/react';
 
 interface NavbarProps {
   profilePicture?: string;
 }
 
 export default function Navbar({ profilePicture = '/profile.png' }: NavbarProps) {
+  const { data: session } = useSession();
+  
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -46,6 +48,21 @@ export default function Navbar({ profilePicture = '/profile.png' }: NavbarProps)
         </button>
       </div>
       <div className="flex items-center gap-4 text-primary">
+        {session ? (
+          <button
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="text-primary font-['Space_Grotesk'] text-sm tracking-widest px-3 py-1 border border-primary/30 hover:bg-primary/10 transition-all"
+          >
+            [LOGOUT]
+          </button>
+        ) : (
+          <button
+            onClick={() => signIn('github', { callbackUrl: '/admin' })}
+            className="text-primary font-['Space_Grotesk'] text-sm tracking-widest px-3 py-1 border border-primary/30 hover:bg-primary/10 transition-all"
+          >
+            [ADMIN_LOGIN]
+          </button>
+        )}
         <span className="material-symbols-outlined text-xl cursor-pointer hover:bg-surface-bright p-1 scale-95 transition-transform">
           terminal
         </span>

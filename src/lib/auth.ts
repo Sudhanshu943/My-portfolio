@@ -7,4 +7,9 @@ export const authOptions = {
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
   ],
+  callbacks: {
+    async session({ session }: { session: any }) {
+      return session;
+    },
+  },
 };
