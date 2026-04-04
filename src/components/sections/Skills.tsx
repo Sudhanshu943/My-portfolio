@@ -12,7 +12,7 @@ interface SkillsData {
   [key: string]: Skill[];
 }
 
-export default function Skills() {
+export default function SkillsSection() {
   const [skills, setSkills] = useState<SkillsData>({});
 
   useEffect(() => {
@@ -22,45 +22,51 @@ export default function Skills() {
   }, []);
 
   return (
-    <section id="skills" className="py-20 px-4">
-      <div className="container mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          className="text-3xl font-mono text-primary mb-12 text-center"
-        >
-          SKILLS
-        </motion.h2>
+    <section id="skills" className="py-[120px] bg-surface-container/40 px-6 backdrop-blur-sm">
+      <div className="max-w-7xl mx-auto">
         <div className="space-y-8">
-          {Object.entries(skills).map(([category, skillList], catIndex) => (
-            <motion.div
-              key={category}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: catIndex * 0.2 }}
-              className="max-w-2xl mx-auto"
-            >
-              <h3 className="text-xl font-mono text-secondary mb-6 uppercase">{category}</h3>
-              <div className="space-y-4">
-                {skillList.map((skill, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-300 font-mono">{skill.name}</span>
-                      <span className="text-primary font-mono">{skill.level}%</span>
-                    </div>
-                    <div className="w-full bg-gray-800 rounded-sm h-3">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${skill.level}%` }}
-                        transition={{ delay: catIndex * 0.2 + index * 0.1, duration: 1.5, ease: 'easeOut' }}
-                        className="bg-primary h-3 rounded-sm"
-                      />
-                    </div>
-                  </div>
-                ))}
+          <div className="flex items-baseline justify-between border-b border-outline-variant/20 pb-4">
+            <h2 className="font-mono-tactical text-2xl font-bold text-primary uppercase">SKILLS_DASHBOARD</h2>
+            <span className="font-mono-tactical text-xs text-on-surface-variant">VULN_SCANNER: ONLINE</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
+            {Object.entries(skills).slice(0, 3).map(([category, skillList], catIndex) => (
+              <motion.div
+                key={category}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: catIndex * 0.1 }}
+                className="bg-surface-container p-8 space-y-4"
+              >
+                <div className="flex justify-between items-center">
+                  <h3 className="font-mono-tactical text-secondary uppercase font-semibold">{category}</h3>
+                  <span className="text-xs font-mono-tactical text-on-surface-variant">
+                    {skillList[0]?.level || 0}%
+                  </span>
+                </div>
+                <p className="font-mono-tactical text-primary text-xl tracking-tight">
+                  [{'█'.repeat(Math.floor((skillList[0]?.level || 0) / 10))}{'░'.repeat(10 - Math.floor((skillList[0]?.level || 0) / 10))}]
+                </p>
+                <ul className="text-xs font-mono-tactical text-on-surface-variant space-y-1 pt-4">
+                  {skillList.slice(0, 3).map((skill, i) => (
+                    <li key={i}>{skill.name.toUpperCase()}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+            {Object.entries(skills).map(([category, skillList]) => (
+              <div key={category} className="border border-outline-variant/30 p-4">
+                <p className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest mb-2">
+                  Category: {category}
+                </p>
+                <p className="text-sm">
+                  {skillList.map(s => s.name).join(', ')}
+                </p>
               </div>
-            </motion.div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

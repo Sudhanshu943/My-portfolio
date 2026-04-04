@@ -2,31 +2,51 @@
 
 import { motion } from 'framer-motion';
 import { ctfWriteups } from '@/data/ctfWriteups';
-import { FileText } from 'lucide-react';
 
-export default function CTFWriteups() {
+export default function CTFWriteupsSection() {
   return (
-    <section id="ctf-writeups" className="py-20 px-4">
-      <div className="container mx-auto">
-        <h2 className="text-3xl font-mono text-primary mb-8 text-center flex items-center justify-center gap-2">
-          <FileText size={32} />
-          CTF WRITEUPS
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section className="py-[120px] bg-surface-container-low/40 px-6 backdrop-blur-sm">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-16">
+          <p className="font-mono-tactical text-xs tracking-[0.3em] text-secondary mb-2">[ DIRECTORY: /WRITEUPS ]</p>
+          <h2 className="text-4xl font-headline font-bold uppercase tracking-tight">Tech Writeups</h2>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {ctfWriteups.map((writeup, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(0, 255, 159, 0.3)' }}
-              className="bg-gray-900 border border-primary/20 rounded p-6"
+              className="bg-surface-container p-8 relative overflow-hidden"
             >
-              <h3 className="text-xl font-mono text-secondary mb-2">{writeup.title}</h3>
-              <p className="text-gray-300 mb-2"><strong>Summary:</strong> {writeup.summary}</p>
-              <p className="text-gray-300 mb-2"><strong>Tools:</strong> {writeup.tools.join(', ')}</p>
-              <p className="text-gray-300 mb-2"><strong>Steps:</strong> {writeup.steps}</p>
-              <p className="text-gray-300"><strong>Result:</strong> {writeup.result}</p>
+              <div className="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
+                <span className="material-symbols-outlined text-9xl">description</span>
+              </div>
+              <h4 className="text-2xl font-bold mb-4">{writeup.title}</h4>
+              <div className="space-y-6 text-sm">
+                <div>
+                  <span className="font-mono-tactical text-primary uppercase block text-xs mb-1">Problem</span>
+                  <p className="text-on-surface-variant">{writeup.summary}</p>
+                </div>
+                <div className="flex gap-8">
+                  <div>
+                    <span className="font-mono-tactical text-primary uppercase block text-xs mb-1">Tools</span>
+                    <p className="text-on-surface-variant">{writeup.tools.join(', ')}</p>
+                  </div>
+                  <div>
+                    <span className="font-mono-tactical text-primary uppercase block text-xs mb-1">Time</span>
+                    <p className="text-on-surface-variant">2 Hours</p>
+                  </div>
+                </div>
+                <div>
+                  <span className="font-mono-tactical text-primary uppercase block text-xs mb-1">Resolution</span>
+                  <p className="text-secondary">{writeup.result}</p>
+                </div>
+                <button className="text-primary font-mono-tactical uppercase text-xs tracking-widest mt-4">
+                  _ [VIEW_FULL_LOG]
+                </button>
+              </div>
             </motion.div>
           ))}
         </div>

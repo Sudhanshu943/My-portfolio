@@ -1,15 +1,150 @@
 @import "tailwindcss";
 
-body {
-  background: #000000;
-  background-image:
-    linear-gradient(rgba(0, 255, 159, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 159, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
-  color: #ffffff;
-  font-family: sans-serif;
+@theme {
+  --color-primary: #a0ffc4;
+  --color-primary-dim: #00ec93;
+  --color-primary-fixed: #00fc9d;
+  --color-primary-fixed-dim: #00ec93;
+  --color-secondary: #00bdfd;
+  --color-secondary-dim: #00afea;
+  --color-secondary-fixed: #9adaff;
+  --color-secondary-fixed-dim: #71ceff;
+  --color-tertiary: #ff706f;
+  --color-tertiary-dim: #e9002e;
+  --color-tertiary-fixed: #ff928e;
+  --color-tertiary-fixed-dim: #ff7a78;
+  --color-error: #ff716c;
+  --color-error-dim: #d7383b;
+  
+  --color-surface: #0e0e0e;
+  --color-surface-dim: #0e0e0e;
+  --color-surface-bright: #2c2c2c;
+  --color-surface-container: #191919;
+  --color-surface-container-low: #131313;
+  --color-surface-container-high: #1f1f1f;
+  --color-surface-container-highest: #262626;
+  --color-surface-container-lowest: #000000;
+  
+  --color-on-surface: #ffffff;
+  --color-on-surface-variant: #ababab;
+  --color-on-primary: #00643b;
+  --color-on-primary-fixed: #004528;
+  --color-on-primary-container: #005b35;
+  --color-on-secondary: #003549;
+  --color-on-secondary-fixed: #00394f;
+  --color-on-secondary-container: #f1f9ff;
+  --color-on-tertiary: #490007;
+  --color-on-tertiary-fixed: #3a0005;
+  --color-on-error: #490006;
+  
+  --color-outline: #757575;
+  --color-outline-variant: #484848;
+  
+  --color-background: #0e0e0e;
+  
+  --font-family-headline: 'Space Grotesk', sans-serif;
+  --font-family-body: 'Inter', sans-serif;
+  --font-family-label: 'Space Grotesk', sans-serif;
+  --font-family-mono: 'Space Grotesk', monospace;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: monospace;
+body {
+  background-color: #0e0e0e;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+}
+
+.font-mono-tactical {
+  font-family: 'Space Grotesk', monospace;
+}
+
+.scanline {
+  width: 100%;
+  height: 100px;
+  z-index: 10;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(160, 255, 196, 0.02) 50%, rgba(0, 0, 0, 0) 100%);
+  opacity: 0.1;
+  position: absolute;
+  pointer-events: none;
+}
+
+.bloom-primary {
+  filter: drop-shadow(0 0 8px rgba(160, 255, 196, 0.4));
+}
+
+.bloom-secondary {
+  filter: drop-shadow(0 0 8px rgba(0, 189, 253, 0.3));
+}
+
+.glass-panel {
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(72, 72, 72, 0.15);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+* {
+  border-radius: 0px;
+}
+
+/* Custom Scrollbar - Cybersecurity Theme */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0e0e0e;
+  border-left: 1px solid #484848;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #a0ffc4, #00bdfd);
+  border-radius: 6px;
+  border: 2px solid #0e0e0e;
+  background-clip: content-box;
+  box-shadow: 0 0 12px rgba(160, 255, 196, 0.3) inset;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #00fc9d, #00afea);
+  background-clip: content-box;
+  box-shadow: 0 0 16px rgba(160, 255, 196, 0.6) inset;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(to bottom, #00ec93, #00bdfd);
+  background-clip: content-box;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-color: #a0ffc4 #0e0e0e;
+  scrollbar-width: thin;
+}
+
+/* Background overlay for sections - allows animated background to show through */
+.section-bg {
+  background: linear-gradient(
+    180deg,
+    rgba(14, 14, 14, 0.85) 0%,
+    rgba(25, 25, 25, 0.85) 50%,
+    rgba(14, 14, 14, 0.85) 100%
+  );
+  position: relative;
+}
+
+.section-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(160, 255, 196, 0.02) 0%,
+    transparent 50%,
+    rgba(0, 189, 253, 0.02) 100%
+  );
+  pointer-events: none;
 }
