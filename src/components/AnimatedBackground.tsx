@@ -33,12 +33,12 @@ export default function AnimatedBackground() {
     // Initialize particles
     const initParticles = () => {
       particlesRef.current = [];
-      for (let i = 0; i < 80; i++) {
+      for (let i = 0; i < 150; i++) {
         particlesRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2,
+          vx: (Math.random() - 0.5) * 3,
+          vy: (Math.random() - 0.5) * 3,
           size: Math.random() * 3 + 1.5,
           opacity: Math.random() * 0.6 + 0.5,
           color: Math.random() > 0.5 ? '#a0ffc4' : '#00bdfd',
@@ -68,15 +68,20 @@ export default function AnimatedBackground() {
         particle.x += particle.vx;
         particle.y += particle.vy;
 
-        // Bounce off edges
-        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+        // Wrap around edges for free movement
+        if (particle.x < 0) particle.x = canvas.width;
+        if (particle.x > canvas.width) particle.x = 0;
+        if (particle.y < 0) particle.y = canvas.height;
+        if (particle.y > canvas.height) particle.y = 0;
 
-        // Keep in bounds
-        particle.x = Math.max(0, Math.min(canvas.width, particle.x));
-        particle.y = Math.max(0, Math.min(canvas.height, particle.y));
+        // Random velocity changes for organic movement
+        particle.vx += (Math.random() - 0.5) * 0.2;
+        particle.vy += (Math.random() - 0.5) * 0.2;
 
-        // Attract to mouse
+        // Clamp velocity
+        particle.vx = Math.max(-2, Math.min(2, particle.vx));
+        particle.vy = Math.max(-2, Math.min(2, particle.vy));
+
         const dx = mouseRef.current.x - particle.x;
         const dy = mouseRef.current.y - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
