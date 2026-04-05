@@ -1,0 +1,47 @@
+{
+  "repoConfig": {
+    "My-portfolio": {
+      "visible": true
+    },
+    "first": {
+      "visible": false
+    },
+    "SEAP-practical-1": {
+      "visible": false
+    },
+    "BLO-search-portel": {
+      "visible": false
+    },
+    "Todo-webapp": {
+      "visible": false
+    },
+    "Ecommarce_Web": {
+      "visible": false
+    },
+    "BOT-APP": {
+      "visible": false
+    },
+    "Password_Generator": {
+      "visible": false
+    },
+    "spam_email_detector": {
+      "visible": false
+    }
+  },
+  "customProjects": [],
+  "profile": {
+    "name": "Sudhanshu Thapa",
+    "bio": "Passionate cybersecurity enthusiast focused on network security, and building secure systems.",
+    "skills": [
+      "Web Security",
+      "Network Security",
+      "Penetration Testing",
+      "Forensics"
+    ],
+    "socialLinks": {
+      "github": "https://github.com/Sudhanshu943",
+      "linkedin": "https://www.linkedin.com/in/sudhanshu-thapa-1827a6272",
+      "email": "sudhanshuthapa8@gmail.com"
+    }
+  }
+}

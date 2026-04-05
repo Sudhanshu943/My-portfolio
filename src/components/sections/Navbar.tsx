@@ -3,11 +3,16 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 
 interface NavbarProps {
+  adminEmail?: string;
   profilePicture?: string;
 }
 
-export default function Navbar({ profilePicture = '/profile.png' }: NavbarProps) {
+export default function Navbar({ adminEmail, profilePicture = '/profile.png' }: NavbarProps) {
   const { data: session } = useSession();
+  
+  const isAdmin = session?.user?.email && 
+    adminEmail?.toLowerCase() && 
+    session.user.email.toLowerCase() === adminEmail.toLowerCase();
   
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -48,7 +53,22 @@ export default function Navbar({ profilePicture = '/profile.png' }: NavbarProps)
         </button>
       </div>
       <div className="flex items-center gap-4 text-primary">
-        {session ? (
+        {isAdmin ? (
+          <>
+            <a
+              href="/admin"
+              className="text-primary font-['Space_Grotesk'] text-sm tracking-widest px-3 py-1 border border-primary/30 hover:bg-primary/10 transition-all"
+            >
+              [ADMIN_PANEL]
+            </a>
+            <button
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className="text-primary font-['Space_Grotesk'] text-sm tracking-widest px-3 py-1 border border-primary/30 hover:bg-primary/10 transition-all"
+            >
+              [LOGOUT]
+            </button>
+          </>
+        ) : session ? (
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
             className="text-primary font-['Space_Grotesk'] text-sm tracking-widest px-3 py-1 border border-primary/30 hover:bg-primary/10 transition-all"

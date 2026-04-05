@@ -17,6 +17,8 @@ import SecurityMindset from '@/components/sections/SecurityMindset';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/sections/Footer';
 
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || process.env.ADMIN_EMAIL || '';
+
 export default function Home() {
   const [booted, setBooted] = useState(false);
 
@@ -28,7 +30,7 @@ export default function Home() {
         <>
           <AnimatedBackground />
           <div className="relative z-10 min-h-screen text-on-surface">
-            <Navbar />
+            <Navbar adminEmail={ADMIN_EMAIL} />
             <Hero />
           <ProofOfWork />
           <SecurityLab />
