@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { authGuard, authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
 import fs from 'fs';
 import path from 'path';
 
@@ -22,7 +22,12 @@ function ensureFile() {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const session = await authGuard(request);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     ensureFile();
     const data = fs.readFileSync(filePath, 'utf8');
@@ -32,16 +37,10 @@ export async function GET() {
   }
 }
 
-async function verifyAdmin(): Promise<boolean> {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return false;
-  return session.user.email.toLowerCase() === process.env.ADMIN_EMAIL?.toLowerCase();
-}
-
 export async function PUT(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  const session = await authGuard(request);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {

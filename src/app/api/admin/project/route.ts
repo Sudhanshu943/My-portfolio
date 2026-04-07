@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { authGuard, authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
 import fs from 'fs';
 import path from 'path';
 
 const configPath = path.join(process.cwd(), 'src/data/admin-config.json');
-
-async function verifyAdmin(): Promise<boolean> {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return false;
-  return session.user.email.toLowerCase() === process.env.ADMIN_EMAIL?.toLowerCase();
-}
 
 function readConfig() {
   if (!fs.existsSync(configPath)) {
@@ -24,9 +18,9 @@ function writeConfig(data: any) {
 }
 
 export async function POST(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  const session = await authGuard(request);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {

@@ -1,5 +1,8 @@
 import GitHubProvider from "next-auth/providers/github";
 import type { AuthOptions } from "next-auth";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const authorizedEmails = (process.env.ADMIN_EMAIL || "").split(",").map((e) => e.trim());
 
@@ -40,3 +43,27 @@ export const authOptions: AuthOptions = {
     error: "/",
   },
 };
+
+export async function verifySession(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return null;
+  }
+  const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+  if (!adminEmail) {
+    return null;
+  }
+  return session.user.email.toLowerCase() === adminEmail ? session : null;
+}
+
+export function requireAuth(): NextResponse {
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+}
+
+export async function authGuard(req: NextRequest): Promise<null | typeof session> {
+  const session = await verifySession(req);
+  if (!session) {
+    return null;
+  }
+  return session;
+}
