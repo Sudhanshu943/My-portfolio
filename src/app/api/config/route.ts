@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
+import { cookies } from 'next/headers';
 import fs from 'fs';
 import path from 'path';
 
 const filePath = path.join(process.cwd(), 'src/data/config.json');
+
+async function verifyAdmin() {
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session');
+  return adminSession?.value === 'true';
+}
 
 export async function GET() {
   try {
@@ -16,8 +21,8 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user?.email !== process.env.ADMIN_EMAIL) {
+  const isAdmin = await verifyAdmin();
+  if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

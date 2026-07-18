@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import fs from 'fs';
 import path from 'path';
 
-const filePath = path.join(process.cwd(), 'src/data/skills.json');
+const filePath = path.join(process.cwd(), 'src/data/education.json');
 
 async function verifyAdmin() {
   const cookieStore = await cookies();
@@ -16,7 +16,7 @@ export async function GET() {
     const data = fs.readFileSync(filePath, 'utf8');
     return NextResponse.json(JSON.parse(data));
   } catch {
-    return NextResponse.json({ error: 'Failed to read skills' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to read education' }, { status: 500 });
   }
 }
 
@@ -27,14 +27,13 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { category, ...skill } = await request.json();
+    const newEducation = await request.json();
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    if (!data[category]) data[category] = [];
-    data[category].push(skill);
+    data.push(newEducation);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
     return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json({ error: 'Failed to add skill' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to add education' }, { status: 500 });
   }
 }
 
@@ -45,13 +44,13 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const { category, index, skill } = await request.json();
+    const { index, ...updatedEducation } = await request.json();
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    data[category][index] = skill;
+    data[index] = { ...data[index], ...updatedEducation };
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
     return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json({ error: 'Failed to update skill' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update education' }, { status: 500 });
   }
 }
 
@@ -62,12 +61,12 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const { category, index } = await request.json();
+    const { index } = await request.json();
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    data[category].splice(index, 1);
+    data.splice(index, 1);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
     return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json({ error: 'Failed to delete skill' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to delete education' }, { status: 500 });
   }
 }

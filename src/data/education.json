@@ -1,0 +1,11 @@
+[
+  {
+    "degree": "B.Tech",
+    "field": "Computer Science & Engineering (Cybersecurity)",
+    "institution": "Uttarakhand Technical University",
+    "startYear": "2023",
+    "endYear": "Present",
+    "cgpa": "7.8",
+    "keySubjects": ["Computer Networks", "Operating Systems", "Cryptography", "Data Structures"]
+  }
+]

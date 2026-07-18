@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authGuard, authOptions } from '@/lib/auth';
-import { getServerSession } from 'next-auth/next';
+import { cookies } from 'next/headers';
 import fs from 'fs';
 import path from 'path';
 
 const configPath = path.join(process.cwd(), 'src/data/admin-config.json');
+
+async function verifyAdmin() {
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session');
+  return adminSession?.value === 'true';
+}
 
 function readConfig() {
   if (!fs.existsSync(configPath)) {
@@ -18,8 +23,8 @@ function writeConfig(data: any) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await authGuard(request);
-  if (!session) {
+  const isAdmin = await verifyAdmin();
+  if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

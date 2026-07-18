@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authGuard, authOptions } from '@/lib/auth';
-import { getServerSession } from 'next-auth/next';
+import { cookies } from 'next/headers';
 import fs from 'fs';
 import path from 'path';
 
 const filePath = path.join(process.cwd(), 'src/data/admin-config.json');
+
+async function verifyAdmin() {
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session');
+  return adminSession?.value === 'true';
+}
 
 function ensureFile() {
   if (!fs.existsSync(filePath)) {
@@ -23,8 +28,8 @@ function ensureFile() {
 }
 
 export async function GET(request: NextRequest) {
-  const session = await authGuard(request);
-  if (!session) {
+  const isAdmin = await verifyAdmin();
+  if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -38,8 +43,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const session = await authGuard(request);
-  if (!session) {
+  const isAdmin = await verifyAdmin();
+  if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

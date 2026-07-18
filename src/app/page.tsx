@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import BootLoader from '@/components/ui/BootLoader';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/sections/Navbar';
@@ -16,36 +16,38 @@ import CurrentFocus from '@/components/sections/CurrentFocus';
 import SecurityMindset from '@/components/sections/SecurityMindset';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/sections/Footer';
-
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || process.env.ADMIN_EMAIL || '';
+import Education from '@/components/sections/Education';
+import AdminControls from '@/components/admin/AdminControls';
 
 export default function Home() {
   const [booted, setBooted] = useState(false);
 
   return (
-    <>
-      {!booted ? (
-        <BootLoader onComplete={() => setBooted(true)} />
-      ) : (
+    // <>
+    //   {!booted ? (
+    //     <BootLoader onComplete={() => setBooted(true)} />
+    //   ) : (
         <>
           <AnimatedBackground />
           <div className="relative z-10 min-h-screen text-on-surface">
-            <Navbar adminEmail={ADMIN_EMAIL} />
+            <Navbar />
             <Hero />
-          <ProofOfWork />
-          <SecurityLab />
-          <CTFWriteups />
-          <GitHubStats />
-          <Projects />
-          <Skills />
-          <Timeline />
-          <CurrentFocus />
-          <SecurityMindset />
-          <Contact />
-          <Footer />
+            <ProofOfWork />
+            <SecurityLab />
+            <CTFWriteups />
+            <GitHubStats />
+            <Projects />
+            <Skills />
+            <Timeline />
+            <Education />
+            <CurrentFocus />
+            <SecurityMindset />
+            <Contact />
+            <Footer />
+            <AdminControls />
           </div>
         </>
-      )}
-    </>
+      //   )}
+      // </>
   );
 }

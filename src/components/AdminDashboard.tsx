@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface RepoConfig {
   visible?: boolean;
@@ -46,7 +46,7 @@ interface Profile {
 }
 
 export default function AdminDashboard() {
-  const { data: session } = useSession();
+  const router = useRouter();
   const [githubRepos, setGitHubRepos] = useState<GitHubRepo[]>([]);
   const [repoConfigs, setRepoConfigs] = useState<Record<string, RepoConfig>>({});
   const [customProjects, setCustomProjects] = useState<CustomProject[]>([]);
@@ -62,6 +62,11 @@ export default function AdminDashboard() {
   });
 
   const [editingProfile, setEditingProfile] = useState<Profile>({ name: '', bio: '', skills: [], socialLinks: { github: '', linkedin: '', email: '' } });
+
+  const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' });
+    router.push('/');
+  };
 
   useEffect(() => {
     fetchData();
@@ -148,7 +153,7 @@ export default function AdminDashboard() {
             </div>
             <div className="flex items-center gap-4">
               <button 
-                onClick={() => signOut({ callbackUrl: '/' })}
+                onClick={handleLogout}
                 className="px-4 py-2 bg-tertiary/10 text-tertiary font-mono-tactical font-bold uppercase tracking-widest hover:bg-tertiary/20 transition-all text-xs"
               >
                 _ [SIGN_OUT]
