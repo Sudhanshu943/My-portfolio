@@ -1,21 +1,28 @@
 import { NextResponse } from 'next/server';
 import { readJsonFile } from '@/lib/data-store';
+import type { Project } from '@/data/projects';
 
 const GITHUB_USERNAME = 'Sudhanshu943';
 
-function readConfig() {
+function readAdminConfig() {
   try {
     return readJsonFile<{
       repoConfig?: Record<string, any>;
-      customProjects?: any[];
       profile?: Record<string, unknown>;
     }>('admin-config.json');
   } catch {
     return {
       repoConfig: {},
-      customProjects: [],
       profile: { name: '', bio: '', skills: [], socialLinks: {} },
     };
+  }
+}
+
+function readCustomProjects(): Project[] {
+  try {
+    return readJsonFile<Project[]>('projects.json');
+  } catch {
+    return [];
   }
 }
 
@@ -23,17 +30,18 @@ export const revalidate = 300;
 
 export async function GET() {
   try {
-    const config = readConfig();
+    const config = readAdminConfig();
     const repoConfig = config.repoConfig || {};
-    const customProjects = config.customProjects || [];
+    const customProjects = readCustomProjects();
 
     const response = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`,
       {
         headers: {
-          'Accept': 'application/vnd.github.v3+json',
+          Accept: 'application/vnd.github.v3+json',
           'User-Agent': 'Portfolio-App',
-        }
+        },
+        next: { revalidate: 300 },
       }
     );
 
@@ -46,7 +54,7 @@ export async function GET() {
 
     const repos = await response.json();
 
-    let mergedRepos = repos
+    const mergedRepos = repos
       .map((repo: any) => {
         const repoConfigItem = repoConfig[repo.name];
         if (repoConfigItem?.visible === false) {
@@ -84,12 +92,13 @@ export async function GET() {
       return a.order - b.order;
     });
 
-    const formattedCustomProjects = customProjects.map((project: any, index: number) => ({
+    const formattedCustomProjects = customProjects.map((project, index) => ({
       id: `custom-${index}`,
-      name: project.title?.toLowerCase().replace(/\s+/g, '-') || `custom-${index}`,
-      type: 'custom',
+      name:
+        project.title?.toLowerCase().replace(/\s+/g, '-') || `custom-${index}`,
+      type: 'custom' as const,
       title: project.title,
-      description: project.description,
+      description: project.problem || project.approach || null,
       htmlUrl: project.demo || project.github || null,
       stargazersCount: 0,
       watchersCount: 0,
@@ -101,19 +110,13 @@ export async function GET() {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       visible: true,
-      featured: project.featured || false,
-      order: project.order ?? 999,
+      featured: false,
+      order: 999,
       customImage: project.image || null,
       customTags: project.techStack || [],
       github: project.github || null,
       demo: project.demo || null,
     }));
-
-    formattedCustomProjects.sort((a: any, b: any) => {
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
-      return a.order - b.order;
-    });
 
     const allProjects = [...mergedRepos, ...formattedCustomProjects];
 
@@ -122,7 +125,7 @@ export async function GET() {
       profile: config.profile,
       lastUpdated: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -10,7 +10,6 @@ const FILE = 'admin-config.json';
 
 type AdminConfig = {
   repoConfig?: Record<string, unknown>;
-  customProjects?: unknown[];
   profile?: Record<string, unknown>;
 };
 
@@ -20,7 +19,6 @@ function readConfig(): AdminConfig {
   } catch {
     return {
       repoConfig: {},
-      customProjects: [],
       profile: { name: '', bio: '', skills: [], socialLinks: {} },
     };
   }
@@ -37,7 +35,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { action, repoName, config, index } = await request.json();
+    const { action, repoName, config } = await request.json();
     const data = readConfig();
 
     switch (action) {
@@ -54,36 +52,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true });
       }
 
-      case 'addCustomProject': {
-        data.customProjects = data.customProjects || [];
-        data.customProjects.push(config);
-        writeConfig(data);
-        return NextResponse.json({ success: true });
-      }
-
-      case 'deleteCustomProject': {
-        if (typeof index !== 'number') {
-          return NextResponse.json({ error: 'index required' }, { status: 400 });
-        }
-        data.customProjects = data.customProjects || [];
-        data.customProjects.splice(index, 1);
-        writeConfig(data);
-        return NextResponse.json({ success: true });
-      }
-
-      case 'updateCustomProject': {
-        if (typeof index !== 'number') {
-          return NextResponse.json({ error: 'index required' }, { status: 400 });
-        }
-        data.customProjects = data.customProjects || [];
-        data.customProjects[index] = {
-          ...(data.customProjects[index] as object),
-          ...config,
-        };
-        writeConfig(data);
-        return NextResponse.json({ success: true });
-      }
-
       case 'updateProfile': {
         data.profile = { ...data.profile, ...config };
         writeConfig(data);
@@ -91,7 +59,13 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+        return NextResponse.json(
+          {
+            error:
+              'Invalid action. Custom projects use /api/projects (projects.json).',
+          },
+          { status: 400 }
+        );
     }
   } catch (error) {
     const { body, status } = persistErrorResponse(error);

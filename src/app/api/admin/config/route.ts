@@ -12,7 +12,6 @@ const FILE = 'admin-config.json';
 
 const DEFAULT_CONFIG = {
   repoConfig: {},
-  customProjects: [],
   profile: {
     name: 'Sudhanshu Thapa',
     bio: '',

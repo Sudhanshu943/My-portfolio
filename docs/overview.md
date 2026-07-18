@@ -30,3 +30,7 @@ This is not a multi-user CMS. Do not add public write access or multi-account au
 4. Deploy — production serves the committed files.
 
 On Vercel, live admin **writes** are disabled (ephemeral filesystem). Reads still work from deployed files.
+
+## Progress
+
+See **[docs/status.md](./status.md)** for a checklist of completed hardening work and recommended next steps (env setup, Formspree, real project content, optional engineering).

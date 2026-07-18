@@ -30,6 +30,7 @@ Located in `src/components/sections/`.
 | `BootLoader` | `src/components/ui/BootLoader.tsx` | Terminal boot sequence animation |
 | `FadeIn` | `src/components/ui/FadeIn.tsx` | Client motion island for scroll-in effects on server sections |
 | `SectionSkeleton` | `src/components/ui/SectionSkeleton.tsx` | Placeholder while dynamic sections load |
+| `ClientOnlyIslands` | `src/components/ui/ClientOnlyIslands.tsx` | `ssr: false` dynamic wrappers (canvas, admin) |
 | `HomeShell` | `src/components/ui/HomeShell.tsx` | Optional boot gate (`ENABLE_BOOT_LOADER`) |
 | `AdminDashboard` | `src/components/AdminDashboard.tsx` | Tabbed admin interface for content management |
 | `AdminControls` | `src/components/admin/AdminControls.tsx` | Floating in-page admin editor |

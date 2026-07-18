@@ -7,10 +7,10 @@ Content lives in `src/data/`. Sole-owner portfolio: edit locally (or via admin),
 | Content | Canonical file | TS helper |
 |---------|----------------|-----------|
 | Site config (name, bio, socials, resume, focus, mindset) | `config.json` | `config.ts` re-exports |
-| Custom projects | `projects.json` | `projects.ts` re-exports |
+| Custom projects | `projects.json` | `projects.ts` re-exports; merged in `/api/portfolio/projects` |
 | Skills | `skills.json` | `skills.ts` re-exports |
 | Education | `education.json` | — |
-| Admin / GitHub merge overrides | `admin-config.json` | — |
+| Admin / GitHub merge | `admin-config.json` | Repo visibility + profile overrides |
 | Timeline | `timeline.ts` only | static |
 | CTF writeups | `ctfWriteups.ts` only | static |
 | Proof of work | `proofOfWork.ts` only | static |
@@ -23,8 +23,8 @@ Content lives in `src/data/`. Sole-owner portfolio: edit locally (or via admin),
 | File | Used By | Content |
 |------|---------|---------|
 | `config.json` + `config.ts` | Components, `/api/config`, admin | Full site profile |
-| `admin-config.json` | Admin + `/api/portfolio/projects` | Repo visibility, custom projects, profile overrides |
-| `projects.json` + `projects.ts` | `/api/projects`, terminal/hero fetches | Custom projects |
+| `admin-config.json` | Admin + `/api/portfolio/projects` | Repo visibility, profile overrides |
+| `projects.json` + `projects.ts` | `/api/projects`, portfolio merge, Hero/Terminal | Custom projects (single source) |
 | `skills.json` + `skills.ts` | `/api/skills` | Skills by category |
 | `education.json` | `/api/education` | Education history |
 | `timeline.ts` | Timeline, Terminal | Career timeline |

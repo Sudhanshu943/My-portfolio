@@ -5,7 +5,7 @@
     "approach": "Built Python script integrating Nmap for port scanning and Scapy for packet crafting, added custom vulnerability checks",
     "techStack": ["Python", "Nmap", "Scapy"],
     "outcome": "Automated scanning reduced assessment time by 70%, identified 15 previously undetected vulnerabilities",
-    "github": "https://github.com/alexjohnson/network-scanner",
+    "github": "https://github.com/Sudhanshu943",
     "demo": null,
     "image": null
   },
@@ -15,8 +15,8 @@
     "approach": "Developed web app using Node.js backend with AES-256 encryption, implemented client-side key derivation",
     "techStack": ["JavaScript", "Node.js", "Crypto API"],
     "outcome": "Enabled secure file exchange for team, processed 500+ files with zero data breaches",
-    "github": "https://github.com/alexjohnson/file-encryptor",
-    "demo": "https://file-encryptor-demo.vercel.app",
+    "github": "https://github.com/Sudhanshu943",
+    "demo": null,
     "image": "/projects/encryption-app.svg"
   },
   {
@@ -25,7 +25,7 @@
     "approach": "Created CLI tool using regex patterns and entropy calculations to evaluate passwords against common attacks",
     "techStack": ["Python", "Regex", "Hashlib"],
     "outcome": "Analyzed 1000+ passwords, improved organizational password policy reducing breaches by 40%",
-    "github": "https://github.com/alexjohnson/password-analyzer",
+    "github": "https://github.com/Sudhanshu943",
     "demo": null,
     "image": "/projects/password-analyzer.svg"
   }

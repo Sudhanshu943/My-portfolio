@@ -1,6 +1,10 @@
 import dynamic from 'next/dynamic';
 import HomeShell from '@/components/ui/HomeShell';
 import SectionSkeleton from '@/components/ui/SectionSkeleton';
+import {
+  AdminControls,
+  AnimatedBackground,
+} from '@/components/ui/ClientOnlyIslands';
 import Navbar from '@/components/sections/Navbar';
 import Hero from '@/components/sections/Hero';
 import ProofOfWork from '@/components/sections/ProofOfWork';
@@ -12,11 +16,6 @@ import CurrentFocus from '@/components/sections/CurrentFocus';
 import SecurityMindset from '@/components/sections/SecurityMindset';
 import Footer from '@/components/sections/Footer';
 import Education from '@/components/sections/Education';
-
-const AnimatedBackground = dynamic(
-  () => import('@/components/AnimatedBackground'),
-  { ssr: false }
-);
 
 const GitHubStats = dynamic(() => import('@/components/sections/GitHubStats'), {
   loading: () => <SectionSkeleton label="Loading GitHub stats" />,
@@ -30,14 +29,9 @@ const Contact = dynamic(() => import('@/components/sections/Contact'), {
   loading: () => <SectionSkeleton label="Loading contact" />,
 });
 
-const AdminControls = dynamic(() => import('@/components/admin/AdminControls'), {
-  ssr: false,
-  loading: () => null,
-});
-
 /**
  * Home page is a Server Component composed of section islands.
- * Heavy client chunks (canvas, GitHub, projects, contact, admin) load via dynamic import.
+ * `ssr: false` dynamics live in ClientOnlyIslands (required by Next 16+).
  * Toggle boot intro via `ENABLE_BOOT_LOADER` in `HomeShell.tsx`.
  */
 export default function Home() {

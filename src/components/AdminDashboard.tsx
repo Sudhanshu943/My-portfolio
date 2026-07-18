@@ -74,19 +74,48 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const [githubRes, configRes] = await Promise.all([
+      const [githubRes, configRes, projectsRes] = await Promise.all([
         fetch('/api/github/repos'),
-        fetch('/api/admin/config')
+        fetch('/api/admin/config'),
+        fetch('/api/projects'),
       ]);
-      
+
       const githubData = await githubRes.json();
       const configData = await configRes.json();
-      
+      const projectsData = await projectsRes.json();
+
       setGitHubRepos(githubData);
       setRepoConfigs(configData.repoConfig || {});
-      setCustomProjects(configData.customProjects || []);
-      setProfile(configData.profile || { name: '', bio: '', skills: [], socialLinks: { github: '', linkedin: '', email: '' } });
-      setEditingProfile(configData.profile || { name: '', bio: '', skills: [], socialLinks: { github: '', linkedin: '', email: '' } });
+      setCustomProjects(
+        Array.isArray(projectsData)
+          ? projectsData.map((p: Record<string, unknown>) => ({
+              title: String(p.title || ''),
+              description: String(p.problem || p.description || ''),
+              techStack: Array.isArray(p.techStack) ? (p.techStack as string[]) : [],
+              github: String(p.github || ''),
+              demo: String(p.demo || ''),
+              image: String(p.image || ''),
+              featured: Boolean(p.featured),
+              order: typeof p.order === 'number' ? p.order : 999,
+            }))
+          : []
+      );
+      setProfile(
+        configData.profile || {
+          name: '',
+          bio: '',
+          skills: [],
+          socialLinks: { github: '', linkedin: '', email: '' },
+        }
+      );
+      setEditingProfile(
+        configData.profile || {
+          name: '',
+          bio: '',
+          skills: [],
+          socialLinks: { github: '', linkedin: '', email: '' },
+        }
+      );
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
@@ -96,35 +125,58 @@ export default function AdminDashboard() {
     await fetch('/api/admin/project', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'updateRepoConfig', repoName, config })
+      body: JSON.stringify({ action: 'updateRepoConfig', repoName, config }),
     });
     fetchData();
   };
 
+  const toProjectPayload = (project: CustomProject) => ({
+    title: project.title,
+    problem: project.description,
+    approach: '',
+    techStack: project.techStack,
+    outcome: '',
+    github: project.github || null,
+    demo: project.demo || null,
+    image: project.image || null,
+  });
+
   const saveCustomProject = async () => {
     if (editingCustomProject) {
-      await fetch('/api/admin/project', {
-        method: 'POST',
+      await fetch('/api/projects', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'updateCustomProject', index: editingCustomProject.index, config: newCustomProject })
+        body: JSON.stringify({
+          index: editingCustomProject.index,
+          ...toProjectPayload(newCustomProject),
+        }),
       });
     } else {
-      await fetch('/api/admin/project', {
+      await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'addCustomProject', config: newCustomProject })
+        body: JSON.stringify(toProjectPayload(newCustomProject)),
       });
     }
     setEditingCustomProject(null);
-    setNewCustomProject({ title: '', description: '', techStack: [], github: '', demo: '', image: '', featured: false, order: 999 });
+    setNewCustomProject({
+      title: '',
+      description: '',
+      techStack: [],
+      github: '',
+      demo: '',
+      image: '',
+      featured: false,
+      order: 999,
+    });
     fetchData();
   };
 
   const deleteCustomProject = async (index: number) => {
-    await fetch('/api/admin/project', {
-      method: 'POST',
+    await fetch('/api/projects', {
+      method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'deleteCustomProject', index })
+      body: JSON.stringify({ index }),
     });
     fetchData();
   };

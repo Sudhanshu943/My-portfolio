@@ -10,6 +10,8 @@ Sole-owner personal portfolio. You are the only editor.
 4. `npm run dev`
 5. Open [http://localhost:3000](http://localhost:3000)
 
+For what already shipped vs remaining tasks, see **`docs/status.md`**.
+
 ## Project Conventions
 
 - **Docs**: Read `docs/` before non-trivial changes; update docs when behavior changes

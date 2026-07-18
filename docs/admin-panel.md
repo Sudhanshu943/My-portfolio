@@ -11,9 +11,13 @@ Owner-only dashboard for managing portfolio content. **Only you** should have `A
 
 ## Recommended workflow (sole owner)
 
+Only **you** log in. Visitors never get write access.
+
 ```
 Local edit (admin UI or src/data/*.json) → git commit → deploy
 ```
+
+Login is rate-limited (5 attempts / 15 min / IP). Use a strong unique `ADMIN_PASSWORD`.
 
 | Environment | Admin reads | Admin writes |
 |-------------|-------------|--------------|
@@ -43,8 +47,8 @@ Writes go through `src/lib/data-store.ts` into:
 
 | File | Content |
 |------|---------|
-| `admin-config.json` | Repo visibility, custom projects, profile overrides |
-| `projects.json` | Custom project entries |
+| `admin-config.json` | Repo visibility, profile overrides (GitHub merge) |
+| `projects.json` | Custom projects (canonical — used by Hero, Settings, Projects grid) |
 | `skills.json` | Skills by category |
 | `education.json` | Education history |
 | `config.json` | Site config (resume, profile picture, etc.) |
@@ -68,8 +72,7 @@ After local edits, **commit these files** so production stays in sync.
 ADMIN_PASSWORD=your-strong-password
 ADMIN_SESSION_SECRET=long-random-secret-for-signing-cookies
 # NEXTAUTH_SECRET=...   # optional legacy alias for ADMIN_SESSION_SECRET
-ADMIN_EMAIL=...
-NEXT_PUBLIC_ADMIN_EMAIL=...
+NEXT_PUBLIC_FORMSPREE_ID=your_formspree_form_id
 ```
 
-Helpers: `src/lib/admin-auth.ts` (Edge-safe), `src/lib/admin-session.ts` (API/server), `src/lib/data-store.ts` (JSON I/O).
+Helpers: `src/lib/admin-auth.ts`, `src/lib/admin-session.ts`, `src/lib/data-store.ts`, `src/lib/login-rate-limit.ts`.

@@ -11,22 +11,22 @@ Personal portfolio for a **single owner**. Production content comes from **git-c
 ## Environment Variables
 
 ```env
-# Admin Authentication (owner only)
+# Admin Authentication (owner only — only you log in)
 ADMIN_PASSWORD=your_secure_password_here
 ADMIN_SESSION_SECRET=your_long_random_session_secret_here
 
-# Optional legacy alias for ADMIN_SESSION_SECRET (same value works)
+# Optional legacy alias for ADMIN_SESSION_SECRET
 # NEXTAUTH_SECRET=...
+
+# Contact form (Formspree form id)
+NEXT_PUBLIC_FORMSPREE_ID=your_formspree_form_id
 
 # Optional: force read-only data APIs
 # DISABLE_DATA_WRITES=true
-
-# Optional contact / identity
-ADMIN_EMAIL=your_email@example.com
-NEXT_PUBLIC_ADMIN_EMAIL=your_email@example.com
 ```
 
 GitHub public repo listing does **not** require OAuth client credentials.
+Login is rate-limited to slow password guessing on the public admin URL.
 
 ## Content deploy workflow
 
@@ -69,8 +69,9 @@ Prefer the Next.js runtime (not static export alone). Same rule: serverless writ
 
 ## Security
 
-- Strong unique `ADMIN_PASSWORD`
+- Strong unique `ADMIN_PASSWORD` (only you log in)
 - Strong `ADMIN_SESSION_SECRET` for HMAC sessions
 - Never commit `.env.local`
 - Sessions expire after 7 days; forging `admin_session=true` fails
-- Optional later: rate-limit `/api/admin/login`
+- Login rate-limited: 5 attempts / 15 minutes / IP
+- Set `NEXT_PUBLIC_FORMSPREE_ID` for the contact form (otherwise mailto fallback message)

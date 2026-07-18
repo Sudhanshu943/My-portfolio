@@ -2,27 +2,45 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { config } from '@/data/config';
+
+const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID;
 
 export default function ContactSection() {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!FORMSPREE_ID) {
+      setStatus('error');
+      setStatusMessage(
+        `Form endpoint not configured. Email me at ${config.socialLinks.email}`
+      );
+      setTimeout(() => setStatus('idle'), 6000);
+      return;
+    }
+
     setLoading(true);
     setStatus('idle');
 
     try {
-      // Using Formspree service (free tier available)
-      // You can also use web3forms or your own backend
-      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -36,15 +54,17 @@ export default function ContactSection() {
 
       if (response.ok) {
         setStatus('success');
-        setStatusMessage('Message sent successfully! I\'ll get back to you soon.');
+        setStatusMessage("Message sent successfully! I'll get back to you soon.");
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
         setStatus('error');
         setStatusMessage('Failed to send message. Please try again.');
       }
-    } catch (error) {
+    } catch {
       setStatus('error');
-      setStatusMessage('An error occurred. Please try again or contact me directly at sudhanshuthapa8@gmail.com');
+      setStatusMessage(
+        `Could not send form. Email me at ${config.socialLinks.email}`
+      );
     }
 
     setLoading(false);
@@ -52,12 +72,22 @@ export default function ContactSection() {
   };
 
   return (
-    <section className="py-[120px] bg-surface/40 px-6 backdrop-blur-sm" id="contact">
+    <section
+      className="py-[120px] bg-surface/40 px-6 backdrop-blur-sm"
+      id="contact"
+    >
       <div className="max-w-2xl mx-auto">
         <div className="mb-16">
-          <p className="font-mono-tactical text-xs tracking-[0.3em] text-secondary mb-2">[ SYSTEM: CONTACT_PROTOCOL ]</p>
-          <h2 className="text-4xl font-headline font-bold uppercase tracking-tight mb-2">Get In Touch</h2>
-          <p className="text-on-surface-variant">Have a project or inquiry? Send me a message and I'll respond as soon as possible.</p>
+          <p className="font-mono-tactical text-xs tracking-[0.3em] text-secondary mb-2">
+            [ SYSTEM: CONTACT_PROTOCOL ]
+          </p>
+          <h2 className="text-4xl font-headline font-bold uppercase tracking-tight mb-2">
+            Get In Touch
+          </h2>
+          <p className="text-on-surface-variant">
+            Have a project or inquiry? Send me a message and I&apos;ll respond as
+            soon as possible.
+          </p>
         </div>
 
         <motion.form
@@ -67,9 +97,10 @@ export default function ContactSection() {
           onSubmit={handleSubmit}
           className="space-y-6 bg-surface-container p-8 border border-outline-variant/20"
         >
-          {/* Name */}
           <div className="space-y-2">
-            <label className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest">Full Name</label>
+            <label className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest">
+              Full Name
+            </label>
             <input
               type="text"
               name="name"
@@ -81,9 +112,10 @@ export default function ContactSection() {
             />
           </div>
 
-          {/* Email */}
           <div className="space-y-2">
-            <label className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest">Email Address</label>
+            <label className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest">
+              Email Address
+            </label>
             <input
               type="email"
               name="email"
@@ -95,9 +127,10 @@ export default function ContactSection() {
             />
           </div>
 
-          {/* Subject */}
           <div className="space-y-2">
-            <label className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest">Subject</label>
+            <label className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest">
+              Subject
+            </label>
             <input
               type="text"
               name="subject"
@@ -109,9 +142,10 @@ export default function ContactSection() {
             />
           </div>
 
-          {/* Message */}
           <div className="space-y-2">
-            <label className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest">Message</label>
+            <label className="font-mono-tactical text-[10px] text-on-surface-variant uppercase tracking-widest">
+              Message
+            </label>
             <textarea
               name="message"
               value={formData.message}
@@ -123,19 +157,17 @@ export default function ContactSection() {
             />
           </div>
 
-          {/* Status Messages */}
           {status === 'success' && (
             <div className="p-4 bg-primary/10 border border-primary/30 text-primary font-mono-tactical text-sm">
-              ✓ {statusMessage}
+              {statusMessage}
             </div>
           )}
           {status === 'error' && (
             <div className="p-4 bg-error/10 border border-error/30 text-error font-mono-tactical text-sm">
-              ✗ {statusMessage}
+              {statusMessage}
             </div>
           )}
 
-          {/* Submit Button */}
           <div className="flex gap-4 pt-4">
             <button
               type="submit"
@@ -146,7 +178,9 @@ export default function ContactSection() {
             </button>
             <button
               type="reset"
-              onClick={() => setFormData({ name: '', email: '', subject: '', message: '' })}
+              onClick={() =>
+                setFormData({ name: '', email: '', subject: '', message: '' })
+              }
               className="px-6 border border-outline-variant text-on-surface-variant font-mono-tactical font-bold py-3 uppercase tracking-widest hover:bg-surface-bright transition-all"
             >
               _ [RESET]
@@ -154,7 +188,6 @@ export default function ContactSection() {
           </div>
         </motion.form>
 
-        {/* Direct Contact Options */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -162,20 +195,39 @@ export default function ContactSection() {
           className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           <div className="bg-surface-container p-6 border-l-4 border-primary">
-            <p className="font-mono-tactical text-[10px] text-on-surface-variant uppercase mb-2">Email</p>
-            <a href="mailto:sudhanshuthapa8@gmail.com" className="text-primary hover:underline break-all">
-              sudhanshuthapa8@gmail.com
+            <p className="font-mono-tactical text-[10px] text-on-surface-variant uppercase mb-2">
+              Email
+            </p>
+            <a
+              href={`mailto:${config.socialLinks.email}`}
+              className="text-primary hover:underline break-all"
+            >
+              {config.socialLinks.email}
             </a>
           </div>
           <div className="bg-surface-container p-6 border-l-4 border-secondary">
-            <p className="font-mono-tactical text-[10px] text-on-surface-variant uppercase mb-2">LinkedIn</p>
-            <a href="https://www.linkedin.com/in/sudhanshu-thapa-1827a6272" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">
-              sudhanshu-thapa-1827a6272
+            <p className="font-mono-tactical text-[10px] text-on-surface-variant uppercase mb-2">
+              LinkedIn
+            </p>
+            <a
+              href={config.socialLinks.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-secondary hover:underline"
+            >
+              LinkedIn profile
             </a>
           </div>
           <div className="bg-surface-container p-6 border-l-4 border-tertiary">
-            <p className="font-mono-tactical text-[10px] text-on-surface-variant uppercase mb-2">GitHub</p>
-            <a href="https://github.com/Sudhanshu943" target="_blank" rel="noopener noreferrer" className="text-tertiary hover:underline">
+            <p className="font-mono-tactical text-[10px] text-on-surface-variant uppercase mb-2">
+              GitHub
+            </p>
+            <a
+              href={config.socialLinks.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-tertiary hover:underline"
+            >
               Sudhanshu943
             </a>
           </div>

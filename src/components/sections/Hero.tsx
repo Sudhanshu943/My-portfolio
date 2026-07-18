@@ -13,7 +13,11 @@ interface Line {
 export default function Hero() {
   const [showContent, setShowContent] = useState(false);
   const [showOutput, setShowOutput] = useState(false);
-  const [configData, setConfigData] = useState({ resume: config.resume, resumeLastUpdated: config.resumeLastUpdated, profilePicture: '/profile.png' });
+  const [configData, setConfigData] = useState({
+    resume: config.resume,
+    resumeLastUpdated: config.resumeLastUpdated,
+    profilePicture: config.profilePicture || '/profile.png',
+  });
   
   // Terminal state
   const [lines, setLines] = useState<Line[]>([]);
@@ -26,8 +30,17 @@ export default function Hero() {
 
   useEffect(() => {
     fetch('/api/config')
-      .then(res => res.json())
-      .then(setConfigData);
+      .then((res) => res.json())
+      .then((data) => {
+        setConfigData((prev) => ({
+          resume: data.resume ?? prev.resume,
+          resumeLastUpdated: data.resumeLastUpdated ?? prev.resumeLastUpdated,
+          profilePicture: data.profilePicture || prev.profilePicture || '/profile.png',
+        }));
+      })
+      .catch(() => {
+        /* keep static defaults */
+      });
   }, []);
 
   useEffect(() => {

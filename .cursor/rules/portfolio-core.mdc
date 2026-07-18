@@ -15,8 +15,9 @@ This is **Sudhanshu Thapa's personal cybersecurity portfolio** — not a multi-u
 
 ## Docs first
 
-Before changing behavior, read the relevant file in `docs/` (`overview`, `admin-panel`, `data-files`, `deployment`, etc.).
+Before changing behavior, read the relevant file in `docs/` (`status`, `overview`, `admin-panel`, `data-files`, `deployment`, etc.).
 Update docs when you change auth, data flow, APIs, or deployment assumptions.
+Keep `docs/status.md` updated when finishing a milestone (done vs next).
 
 ## Content workflow
 

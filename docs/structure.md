@@ -82,7 +82,7 @@ my-portfolio/
 │       ├── admin-auth.ts       # Signed admin session (Edge-safe)
 │       ├── admin-session.ts    # isAdminAuthenticated via cookies()
 │       └── data-store.ts       # JSON read/write + serverless write guard
-├── docs/                       # Documentation (this folder)
+├── docs/                       # Documentation (see status.md for done / next)
 ├── .cursor/rules/              # Cursor agent rules (sole-owner portfolio)
 └── .next/                      # Next.js build output
 ```

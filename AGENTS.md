@@ -18,6 +18,7 @@ All project documentation lives in the `docs/` directory. Consult these files be
 
 | File | Content |
 |------|---------|
+| `docs/status.md` | **What is done / what to do next** (checklist) |
 | `docs/overview.md` | Project purpose, ownership model, features |
 | `docs/tech-stack.md` | Framework versions, dependencies, and theme configuration |
 | `docs/structure.md` | Full directory tree with explanations of key directories |
