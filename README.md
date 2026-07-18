@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Portfolio
+
+A cybersecurity-themed personal portfolio website designed with a "TERMINAL_OS_v1.0" hacker/terminal aesthetic. Features an interactive terminal hero, animated particle background, live GitHub integration, and a full admin panel for dynamic content management.
+
+## Features
+
+- **Interactive Terminal Hero** — Command-line interface with commands: `help`, `about`, `skills`, `projects`, `contact`, `timeline`, `clear`
+- **Animated Particle Background** — Canvas-based particle system with mouse-reactive connecting lines
+- **GitHub-Live Projects** — Fetches and displays repositories from GitHub in real-time
+- **Admin Panel** — Password-protected dashboard for managing projects, skills, education, and site configuration
+- **Security Headers** — Global security headers configured via Next.js
+- **14 Page Sections** — Navbar, Hero, ProofOfWork, SecurityLab, CTFWriteups, GitHubStats, Projects, Skills, Timeline, Education, CurrentFocus, SecurityMindset, Contact, Footer
+
+## Tech Stack
+
+- Next.js 16.2.2 (App Router, TypeScript)
+- React 19.2.4
+- Tailwind CSS v4
+- Framer Motion 12
+- Canvas API (particle background)
+- Material Symbols (icons)
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create `.env.local` with required environment variables (see [docs/deployment.md](./docs/deployment.md))
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Scripts
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Documentation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Full documentation is available in the [`docs/`](./docs/) directory:
 
-## Learn More
+| File | Content |
+|------|---------|
+| `docs/overview.md` | Project purpose, features, and high-level description |
+| `docs/tech-stack.md` | Framework versions, dependencies, and theme configuration |
+| `docs/structure.md` | Full directory tree with explanations of key directories |
+| `docs/admin-panel.md` | Admin dashboard, authentication, and data persistence details |
+| `docs/api-routes.md` | All API endpoints, methods, and authentication requirements |
+| `docs/data-files.md` | Data file formats, locations, and data flow between TS/JSON |
+| `docs/deployment.md` | Build commands, environment variables, and deployment platforms |
+| `docs/development.md` | Development setup, conventions, and contribution guidelines |
+| `docs/components.md` | Component reference including all 14 sections and terminal commands |
 
-To learn more about Next.js, take a look at the following resources:
+## Admin Panel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Navigate to `/admin` and log in with the password set in your `ADMIN_PASSWORD` environment variable to manage portfolio content.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+See [docs/deployment.md](./docs/deployment.md) for deployment instructions, environment variables, and security considerations.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private — All rights reserved.
