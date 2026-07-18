@@ -1,82 +1,76 @@
 # Deployment
 
+Personal portfolio for a **single owner**. Production content comes from **git-committed** `src/data/` files.
+
 ## Prerequisites
 
-- Node.js 18+ (recommended)
-- npm, yarn, pnpm, or bun
-- Environment variables configured (see Environment section below)
+- Node.js 18+
+- npm / yarn / pnpm / bun
+- Environment variables configured
 
 ## Environment Variables
 
-Create a `.env.local` file in the project root with the following variables:
-
 ```env
-# Admin Authentication
+# Admin Authentication (owner only)
 ADMIN_PASSWORD=your_secure_password_here
+ADMIN_SESSION_SECRET=your_long_random_session_secret_here
 
-# NextAuth Configuration
-NEXTAUTH_SECRET=your_nextauth_secret_here
-NEXTAUTH_URL=https://your-domain.com
+# Optional legacy alias for ADMIN_SESSION_SECRET (same value works)
+# NEXTAUTH_SECRET=...
 
-# GitHub OAuth (for live repo fetching)
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
+# Optional: force read-only data APIs
+# DISABLE_DATA_WRITES=true
 
-# Admin Email
+# Optional contact / identity
 ADMIN_EMAIL=your_email@example.com
 NEXT_PUBLIC_ADMIN_EMAIL=your_email@example.com
 ```
 
+GitHub public repo listing does **not** require OAuth client credentials.
+
+## Content deploy workflow
+
+1. Edit locally with `/admin` or by changing `src/data/*`
+2. Commit JSON/TS data changes
+3. Push → platform builds and serves those files
+
+On **Vercel**, admin **writes** are automatically disabled (`VERCEL=1`). That is expected for a sole-owner site — no database required.
+
 ## Build Commands
 
 ```bash
-# Install dependencies
 npm install
-
-# Run development server
-npm run dev
-
-# Build for production
+npm run dev      # local — admin writes work
 npm run build
-
-# Start production server
-npm run start
-
-# Run linter
+npm run start    # self-hosted Node — admin writes work
 npm run lint
 ```
 
-## Deployment Platforms
+## Platforms
 
-### Vercel (Recommended)
+### Vercel
 
-1. Push repository to GitHub
-2. Import project in Vercel
-3. Add all environment variables in Vercel dashboard
-4. Deploy
+1. Import the GitHub repo
+2. Add env vars in the dashboard (`ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`)
+3. Deploy
+4. Use local admin (or direct file edits) + git for content updates
+
+### Self-hosted Node
+
+```bash
+npm run build && npm run start
+```
+
+Writable filesystem → admin panel can persist JSON on the server. Still commit important changes to git for backup.
 
 ### Netlify
 
-1. Push repository to GitHub
-2. Import project in Netlify
-3. Set build command: `npm run build`
-4. Set publish directory: `.next`
-5. Add environment variables
-6. Deploy
+Prefer the Next.js runtime (not static export alone). Same rule: serverless writes to `src/data` are not durable — use the commit workflow.
 
-### Self-Hosted
+## Security
 
-```bash
-npm run build
-npm run start
-```
-
-Server must support Node.js and be configured to run the Next.js server.
-
-## Security Considerations
-
-- `ADMIN_PASSWORD` should be a strong, unique password
-- `NEXTAUTH_SECRET` should be a cryptographically secure random string
-- The `.env.local` file is gitignored — never commit secrets
-- Consider implementing rate limiting on admin login in production
-- The current admin authentication is simple (shared password + cookie). For production, consider upgrading to a proper authentication system.
+- Strong unique `ADMIN_PASSWORD`
+- Strong `ADMIN_SESSION_SECRET` for HMAC sessions
+- Never commit `.env.local`
+- Sessions expire after 7 days; forging `admin_session=true` fails
+- Optional later: rate-limit `/api/admin/login`

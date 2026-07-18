@@ -1,38 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { isAdminAuthenticated } from '@/lib/admin-session';
+import {
+  persistErrorResponse,
+  readJsonFile,
+  writeJsonFile,
+} from '@/lib/data-store';
 
-const filePath = path.join(process.cwd(), 'src/data/config.json');
-
-async function verifyAdmin() {
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get('admin_session');
-  return adminSession?.value === 'true';
-}
+const FILE = 'config.json';
 
 export async function GET() {
   try {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return NextResponse.json(JSON.parse(data));
+    return NextResponse.json(readJsonFile(FILE));
   } catch {
     return NextResponse.json({ error: 'Failed to read config' }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
+  const isAdmin = await isAdminAuthenticated();
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const updatedConfig = await request.json();
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const data = readJsonFile<Record<string, unknown>>(FILE);
     const newData = { ...data, ...updatedConfig };
-    fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));
+    writeJsonFile(newData, FILE);
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    const { body, status } = persistErrorResponse(error);
+    if (status === 503) return NextResponse.json(body, { status });
     return NextResponse.json({ error: 'Failed to update config' }, { status: 500 });
   }
 }

@@ -1,0 +1,26 @@
+---
+description: Admin auth and JSON data persistence rules
+globs: src/app/api/**/*.ts,src/lib/admin*.ts,src/lib/data-store.ts,src/data/**/*,middleware.ts
+alwaysApply: false
+---
+
+# Admin & Data
+
+## Auth
+
+- Use `src/lib/admin-auth.ts` (Edge-safe) and `src/lib/admin-session.ts` (cookies).
+- Session cookie is an HMAC-signed token — never `admin_session=true`.
+- Require `ADMIN_PASSWORD` plus `ADMIN_SESSION_SECRET` (legacy alias: `NEXTAUTH_SECRET`).
+- All mutating API routes must call `isAdminAuthenticated()` before writes.
+- Middleware protects `/admin` and `/admin/*` except `/admin/login`.
+
+## Persistence
+
+- Editable content lives in `src/data/*.json` (source of truth for admin).
+- Static showcase content may stay in `src/data/*.ts` (timeline, CTF, labs, etc.).
+- All JSON writes go through `src/lib/data-store.ts` — never raw `fs.writeFileSync` in routes.
+- If `canPersistData()` is false (e.g. Vercel), return a clear error; do not silently no-op.
+
+## Dual files
+
+Admin-editable data is **JSON-canonical**. Matching `.ts` files only re-export JSON (types + `export const`). Do not maintain a second hand-edited object in `.ts`. Static-only content (timeline, CTF, labs) may stay TS-only.

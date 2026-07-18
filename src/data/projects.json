@@ -1,5 +1,15 @@
 [
   {
+    "title": "Network Vulnerability Scanner",
+    "problem": "Manual network scanning is time-consuming and error-prone for security assessments",
+    "approach": "Built Python script integrating Nmap for port scanning and Scapy for packet crafting, added custom vulnerability checks",
+    "techStack": ["Python", "Nmap", "Scapy"],
+    "outcome": "Automated scanning reduced assessment time by 70%, identified 15 previously undetected vulnerabilities",
+    "github": "https://github.com/alexjohnson/network-scanner",
+    "demo": null,
+    "image": null
+  },
+  {
     "title": "Secure File Encryption App",
     "problem": "Need secure file sharing without relying on third-party services",
     "approach": "Developed web app using Node.js backend with AES-256 encryption, implemented client-side key derivation",

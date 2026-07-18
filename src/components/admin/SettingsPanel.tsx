@@ -82,7 +82,12 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
       
       setProjects(projectsData);
       setSkills(skillsData);
-      setSocialLinks(configData.socialLinks || { github: '', linkedin: '', email: '', resume: '' });
+      setSocialLinks({
+        github: configData.socialLinks?.github || '',
+        linkedin: configData.socialLinks?.linkedin || '',
+        email: configData.socialLinks?.email || '',
+        resume: configData.resume || '',
+      });
       setEducation(educationData);
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -181,10 +186,14 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
   const saveSocialLinks = async () => {
     setLoading(true);
     try {
+      const { resume, ...links } = socialLinks;
       await fetch('/api/config', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ socialLinks })
+        body: JSON.stringify({
+          socialLinks: links,
+          ...(resume ? { resume } : {}),
+        })
       });
       showMessage('Social links saved!');
     } catch (error) {
@@ -200,7 +209,7 @@ export default function SettingsPanel({ isOpen, onClose }: SettingsPanelProps) {
       await fetch('/api/config', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resumeUrl: url })
+        body: JSON.stringify({ resume: url })
       });
       showMessage('Resume link saved!');
     } catch (error) {

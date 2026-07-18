@@ -1,64 +1,75 @@
 # Admin Panel
 
-The admin panel provides a password-protected interface for managing portfolio content without touching code. All changes persist to local JSON files.
+Owner-only dashboard for managing portfolio content. **Only you** should have `ADMIN_PASSWORD`. Visitors never get write access.
 
 ## Access
 
 - **URL**: `/admin`
-- **Authentication**: Password-based via `ADMIN_PASSWORD` environment variable
-- **Route Protection**: Middleware validates `admin_session` cookie for all `/admin/*` routes
+- **Authentication**: Password via `ADMIN_PASSWORD`
+- **Route Protection**: Middleware validates a signed `admin_session` cookie for `/admin` and `/admin/*` (except `/admin/login`)
+- **Session**: HMAC-SHA256 signed token with expiry; secret from `ADMIN_SESSION_SECRET` (legacy alias: `NEXTAUTH_SECRET`)
+
+## Recommended workflow (sole owner)
+
+```
+Local edit (admin UI or src/data/*.json) → git commit → deploy
+```
+
+| Environment | Admin reads | Admin writes |
+|-------------|-------------|--------------|
+| Local `npm run dev` / self-hosted Node | Yes | Yes → `src/data/*.json` |
+| Vercel / serverless | Yes (committed files) | **No** — returns `503 DATA_WRITES_DISABLED` |
+
+Set `DISABLE_DATA_WRITES=true` to force read-only anywhere.
 
 ## Admin Dashboard
 
-Located at `src/app/admin/page.tsx`, the dashboard renders `<AdminDashboard />` which provides:
+Located at `src/app/admin/page.tsx`, renders `<AdminDashboard />`:
 
 ### Tabs
 
-1. **GitHub Repos** — Manage visibility, featured status, custom title/description/tags/image, and sort order for GitHub-fetched repositories.
-2. **Custom Projects** — Add, edit, and delete custom (non-GitHub) portfolio projects.
-3. **Profile** — Edit profile information, social links, and resume URL.
+1. **GitHub Repos** — Visibility, featured, custom title/description/tags/image, sort order.
+2. **Custom Projects** — Add, edit, delete non-GitHub projects.
+3. **Profile** — Profile info, social links, resume URL.
 
 ### In-Page Editor
 
-The `<AdminControls />` and `<SettingsPanel />` components provide floating controls on the main portfolio page (visible when logged in) for quick editing of:
-- Projects
-- Skills
-- Social links
-- Resume link
-- Education entries
+`<AdminControls />` / `<SettingsPanel />` on the main page when logged in:
+- Projects, skills, social links, resume, education
 
 ## Data Persistence
 
-Admin changes are saved to JSON files in `src/data/`:
+Writes go through `src/lib/data-store.ts` into:
 
 | File | Content |
 |------|---------|
-| `admin-config.json` | Repo visibility config, custom projects, profile overrides |
+| `admin-config.json` | Repo visibility, custom projects, profile overrides |
 | `projects.json` | Custom project entries |
-| `skills.json` | Skills categorized by type with proficiency levels |
-| `education.json` | Education history entries |
+| `skills.json` | Skills by category |
+| `education.json` | Education history |
+| `config.json` | Site config (resume, profile picture, etc.) |
+
+After local edits, **commit these files** so production stays in sync.
 
 ## API Routes
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/admin/login` | Authenticate with password, sets `admin_session` cookie |
-| `POST` | `/api/admin/logout` | Clear `admin_session` cookie |
-| `GET` | `/api/admin/check` | Check if admin session is active |
-| `GET` | `/api/admin/config` | Fetch current admin config |
-| `PUT` | `/api/admin/config` | Update admin config |
-| `POST` | `/api/admin/project` | Perform project actions (visibility, featured, etc.) |
+| `POST` | `/api/admin/login` | Password auth → signed `admin_session` cookie |
+| `POST` | `/api/admin/logout` | Clear session cookie |
+| `GET` | `/api/admin/check` | Whether session is valid |
+| `GET` | `/api/admin/config` | Fetch `admin-config.json` |
+| `PUT` | `/api/admin/config` | Update `admin-config.json` |
+| `POST` | `/api/admin/project` | Project/repo/profile actions |
 
 ## Environment Variables
 
-Required in `.env.local`:
-
 ```
-ADMIN_PASSWORD=SecureAdminPass2024!
-NEXTAUTH_SECRET=...
-NEXTAUTH_URL=http://localhost:3000
-GITHUB_CLIENT_ID=...
-GITHUB_CLIENT_SECRET=...
+ADMIN_PASSWORD=your-strong-password
+ADMIN_SESSION_SECRET=long-random-secret-for-signing-cookies
+# NEXTAUTH_SECRET=...   # optional legacy alias for ADMIN_SESSION_SECRET
 ADMIN_EMAIL=...
 NEXT_PUBLIC_ADMIN_EMAIL=...
 ```
+
+Helpers: `src/lib/admin-auth.ts` (Edge-safe), `src/lib/admin-session.ts` (API/server), `src/lib/data-store.ts` (JSON I/O).

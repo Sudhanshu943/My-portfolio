@@ -1,5 +1,18 @@
 {
+  "name": "Sudhanshu Thapa",
+  "role": "Cybersecurity Student",
+  "bio": "Passionate cybersecurity enthusiast focused on ethical hacking, network security, and building secure systems.",
+  "socialLinks": {
+    "github": "https://github.com/Sudhanshu943",
+    "linkedin": "https://www.linkedin.com/in/sudhanshu-thapa-1827a6272",
+    "email": "sudhanshuthapa8@gmail.com"
+  },
   "resume": "/resume.pdf",
   "resumeLastUpdated": "2024-10-01",
-  "profilePicture": "/profile.png"
+  "profilePicture": "/profile.png",
+  "currentFocus": {
+    "learning": ["Web Security", "Forensics"],
+    "next": ["Reverse Engineering", "Malware Analysis"]
+  },
+  "securityMindset": "I focus on understanding systems deeply, preferring manual analysis over automated tools. My approach emphasizes problem-solving, documentation, and continuous learning in cybersecurity."
 }

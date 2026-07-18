@@ -1,0 +1,20 @@
+---
+description: UI and section conventions for the portfolio frontend
+globs: src/components/**/*.tsx,src/app/**/*.tsx
+alwaysApply: false
+---
+
+# Frontend Conventions
+
+- Sections live in `src/components/sections/`; keep one job per section.
+- Prefer **Server Components** for static/content sections. Use `'use client'` only for hooks, forms, canvas, or live fetches.
+- Scroll animations: wrap content in `src/components/ui/FadeIn.tsx` instead of making the whole section a client component.
+- Lazy-load heavy client islands from `page.tsx` with `next/dynamic` (canvas, GitHub, projects, contact, admin).
+- Canvas: respect `prefers-reduced-motion`, pause when the tab is hidden, scale particle count by viewport.
+- Defer below-fold network fetches until the section is near the viewport (IntersectionObserver).
+- Preserve the terminal / cybersecurity visual language (mono + Space Grotesk, neon accents).
+- Prefer reading admin JSON via `readJsonFile` in Server Components (or API for client islands) — avoid duplicate hard-coded copies.
+- Static narrative blocks (CTF, labs, proof-of-work, timeline) may import `@/data/*.ts` directly.
+- Admin UI (`AdminControls`, `AdminDashboard`) is owner-only; gate visibility on `/api/admin/check`.
+- Do not add generic card grids or purple SaaS styling that fights the existing theme.
+- `src/app/page.tsx` stays a Server Component; compose client islands inside it.

@@ -3,14 +3,14 @@
 | Category | Technology | Version | Notes |
 |----------|-----------|---------|-------|
 | **Framework** | Next.js | 16.2.2 | App Router, React Server Components, TypeScript |
-| **UI Library** | React | 19.2.4 | Client components used extensively |
+| **UI Library** | React | 19.2.4 | Client islands for interactive sections |
 | **Language** | TypeScript | 5.x | Strict mode enabled |
 | **Styling** | Tailwind CSS | v4 | `@tailwindcss/postcss` plugin, `@theme` tokens in `globals.css` |
-| **Animations** | Framer Motion | 12.x | Page transitions and section animations |
+| **Animations** | Framer Motion | 12.x | `FadeIn` islands + section motion |
 | **Icons** | Material Symbols | — | Google Fonts icon set loaded in root layout |
-| **Authentication** | next-auth | 4.x | Environment-configured (admin uses simple cookie + password) |
+| **Authentication** | Custom HMAC session | — | Password + signed cookie (`src/lib/admin-auth.ts`) |
 | **Background** | Canvas API | — | Custom particle system (no external library) |
-| **Data Storage** | JSON files | — | Local file system via Node `fs` module |
+| **Data Storage** | JSON files | — | Via `src/lib/data-store.ts` (local writes; commit to deploy) |
 | **Linting** | ESLint | 9.x | `eslint-config-next/core-web-vitals` + TypeScript |
 | **Build Tool** | Next.js (SWC) | — | Built-in compiler |
 

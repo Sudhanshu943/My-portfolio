@@ -1,8 +1,6 @@
-'use client';
+import { readJsonFile } from '@/lib/data-store';
 
-import { useState, useEffect } from 'react';
-
-interface Education {
+type EducationEntry = {
   degree: string;
   field: string;
   institution: string;
@@ -10,30 +8,26 @@ interface Education {
   endYear: string;
   cgpa?: string;
   keySubjects?: string[];
-}
+};
 
 export default function Education() {
-  const [education, setEducation] = useState<Education[]>([]);
-
-  useEffect(() => {
-    fetchEducation();
-  }, []);
-
-  const fetchEducation = async () => {
-    try {
-      const res = await fetch('/api/education');
-      const data = await res.json();
-      setEducation(data);
-    } catch (error) {
-      console.error('Failed to fetch education:', error);
-    }
-  };
+  let education: EducationEntry[] = [];
+  try {
+    education = readJsonFile<EducationEntry[]>('education.json');
+  } catch {
+    education = [];
+  }
 
   return (
-    <section className="py-[120px] bg-surface-container/40 px-6 backdrop-blur-sm" id="education">
+    <section
+      className="py-[120px] bg-surface-container/40 px-6 backdrop-blur-sm"
+      id="education"
+    >
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-3 mb-12">
-          <span className="material-symbols-outlined text-primary text-2xl">school</span>
+          <span className="material-symbols-outlined text-primary text-2xl">
+            school
+          </span>
           <h2 className="text-3xl font-bold text-on-surface font-['Space_Grotesk'] uppercase tracking-tight">
             Academic Background
           </h2>
@@ -67,14 +61,18 @@ export default function Education() {
 
                 <div className="text-right">
                   <span className="inline-block px-3 py-1 bg-primary/10 border border-primary/20 text-primary text-xs font-mono">
-                    {edu.startYear === '2023' ? 'Current' : 'Completed'}
+                    {edu.endYear === 'Present' || edu.startYear === '2023'
+                      ? 'Current'
+                      : 'Completed'}
                   </span>
                 </div>
               </div>
 
               {edu.keySubjects && edu.keySubjects.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-outline-variant/20">
-                  <p className="text-on-surface-variant text-xs mb-2">Key Subjects:</p>
+                  <p className="text-on-surface-variant text-xs mb-2">
+                    Key Subjects:
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {edu.keySubjects.map((subject, i) => (
                       <span
@@ -93,7 +91,9 @@ export default function Education() {
 
         {education.length === 0 && (
           <div className="text-center text-on-surface-variant py-8">
-            <span className="material-symbols-outlined text-4xl mb-4 opacity-50">school</span>
+            <span className="material-symbols-outlined text-4xl mb-4 opacity-50">
+              school
+            </span>
             <p>No education data available</p>
           </div>
         )}

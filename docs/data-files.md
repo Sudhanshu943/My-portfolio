@@ -1,26 +1,45 @@
 # Data Files
 
-Content is stored in `src/data/` as a mix of TypeScript exports (used by components) and JSON files (used by API routes).
+Content lives in `src/data/`. Sole-owner portfolio: edit locally (or via admin), commit, deploy.
+
+## Source of truth
+
+| Content | Canonical file | TS helper |
+|---------|----------------|-----------|
+| Site config (name, bio, socials, resume, focus, mindset) | `config.json` | `config.ts` re-exports |
+| Custom projects | `projects.json` | `projects.ts` re-exports |
+| Skills | `skills.json` | `skills.ts` re-exports |
+| Education | `education.json` | — |
+| Admin / GitHub merge overrides | `admin-config.json` | — |
+| Timeline | `timeline.ts` only | static |
+| CTF writeups | `ctfWriteups.ts` only | static |
+| Proof of work | `proofOfWork.ts` only | static |
+| Security labs | `securityLabs.ts` only | static |
+
+**Rule:** Never duplicate the same field in both a hand-maintained `.ts` object and a `.json` file. JSON owns admin-editable data; `.ts` files either re-export that JSON or hold static-only narrative.
 
 ## Files
 
-| File | Format | Used By | Content |
-|------|--------|---------|---------|
-| `config.ts` | TS Export | Components | Profile info, bio, social links, resume URL |
-| `config.json` | JSON | API | Site configuration (profile, bio, social links, resume) |
-| `admin-config.json` | JSON | API + Admin | Repo visibility, featured projects, custom projects, profile overrides |
-| `projects.ts` | TS Export | Components | Custom project entries with metadata |
-| `projects.json` | JSON | API | Custom project entries (persisted by admin panel) |
-| `skills.ts` | TS Export | Components | Skills categorized by type with proficiency levels |
-| `skills.json` | JSON | API | Skills entries (persisted by admin panel) |
-| `education.json` | JSON | API + Components | Education history entries |
-| `timeline.ts` | TS Export | Components | Career/achievement timeline events |
-| `ctfWriteups.ts` | TS Export | Components | CTF competition writeups |
-| `proofOfWork.ts` | TS Export | Components | Proof of work / certifications |
-| `securityLabs.ts` | TS Export | Components | Security lab projects and descriptions |
+| File | Used By | Content |
+|------|---------|---------|
+| `config.json` + `config.ts` | Components, `/api/config`, admin | Full site profile |
+| `admin-config.json` | Admin + `/api/portfolio/projects` | Repo visibility, custom projects, profile overrides |
+| `projects.json` + `projects.ts` | `/api/projects`, terminal/hero fetches | Custom projects |
+| `skills.json` + `skills.ts` | `/api/skills` | Skills by category |
+| `education.json` | `/api/education` | Education history |
+| `timeline.ts` | Timeline, Terminal | Career timeline |
+| `ctfWriteups.ts` | CTFWriteups | CTF writeups |
+| `proofOfWork.ts` | ProofOfWork | Certifications |
+| `securityLabs.ts` | SecurityLab | Lab entries |
 
-## Data Flow
+## Data flow
 
-1. **Static data** (`*.ts` exports) — Loaded directly by components at build time.
-2. **Editable data** (`*.json` files) — Read/written by API routes using Node `fs` module. Modified through the admin panel.
-3. **GitHub data** — Fetched at runtime from GitHub API, cached with 300s revalidation, merged with custom projects.
+1. **JSON (admin-editable)** — Read/written via `src/lib/data-store.ts` in API routes. Components may `import` the matching `.ts` re-export or `fetch` the API.
+2. **Static TS** — Imported directly by sections (timeline, CTF, labs, proof-of-work).
+3. **GitHub** — Fetched at runtime (~300s cache), merged with `admin-config.json`.
+
+## Persistence
+
+- Local / self-hosted Node: writes allowed.
+- Vercel (`VERCEL=1`) or `DISABLE_DATA_WRITES=true`: writes → `503 DATA_WRITES_DISABLED`.
+- Production = committed git files.

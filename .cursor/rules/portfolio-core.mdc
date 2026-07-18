@@ -1,0 +1,33 @@
+---
+description: Core conventions for this sole-owner personal portfolio
+alwaysApply: true
+---
+
+# Portfolio Core
+
+This is **Sudhanshu Thapa's personal cybersecurity portfolio** — not a multi-user product.
+
+## Ownership
+
+- Only the site owner edits content (admin password + signed session).
+- Do not add multi-user auth, roles, teams, or public write APIs.
+- Prefer simple, maintainable solutions over CMS/database platforms unless explicitly requested.
+
+## Docs first
+
+Before changing behavior, read the relevant file in `docs/` (`overview`, `admin-panel`, `data-files`, `deployment`, etc.).
+Update docs when you change auth, data flow, APIs, or deployment assumptions.
+
+## Content workflow
+
+1. Edit locally via `/admin` (writes `src/data/*.json`) **or** edit JSON/TS directly.
+2. Commit the data files.
+3. Deploy — production serves committed files.
+
+On Vercel/serverless, filesystem writes are disabled; do not "fix" that with a DB unless asked.
+
+## Stack notes
+
+- Next.js App Router — check `node_modules/next/dist/docs/` for this version's APIs.
+- Theme: black + neon green `#00ff9f` + cyan + red. Keep the terminal aesthetic.
+- Path alias: `@/*` → `src/*`.

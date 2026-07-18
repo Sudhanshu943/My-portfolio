@@ -1,19 +1,21 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { readJsonFile } from '@/lib/data-store';
 
 const GITHUB_USERNAME = 'Sudhanshu943';
 
-const configPath = path.join(process.cwd(), 'src/data/admin-config.json');
-
 function readConfig() {
   try {
-    if (!fs.existsSync(configPath)) {
-      return { repoConfig: {}, customProjects: [], profile: { name: "", bio: "", skills: [], socialLinks: {} } };
-    }
-    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    return readJsonFile<{
+      repoConfig?: Record<string, any>;
+      customProjects?: any[];
+      profile?: Record<string, unknown>;
+    }>('admin-config.json');
   } catch {
-    return { repoConfig: {}, customProjects: [], profile: { name: "", bio: "", skills: [], socialLinks: {} } };
+    return {
+      repoConfig: {},
+      customProjects: [],
+      profile: { name: '', bio: '', skills: [], socialLinks: {} },
+    };
   }
 }
 

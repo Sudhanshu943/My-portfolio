@@ -1,29 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { isAdminAuthenticated } from '@/lib/admin-session';
+import {
+  persistErrorResponse,
+  readJsonFile,
+  writeJsonFile,
+} from '@/lib/data-store';
 
-const configPath = path.join(process.cwd(), 'src/data/admin-config.json');
+const FILE = 'admin-config.json';
 
-async function verifyAdmin() {
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get('admin_session');
-  return adminSession?.value === 'true';
-}
+type AdminConfig = {
+  repoConfig?: Record<string, unknown>;
+  customProjects?: unknown[];
+  profile?: Record<string, unknown>;
+};
 
-function readConfig() {
-  if (!fs.existsSync(configPath)) {
-    return { repoConfig: {}, customProjects: [], profile: { name: "", bio: "", skills: [], socialLinks: {} } };
+function readConfig(): AdminConfig {
+  try {
+    return readJsonFile<AdminConfig>(FILE);
+  } catch {
+    return {
+      repoConfig: {},
+      customProjects: [],
+      profile: { name: '', bio: '', skills: [], socialLinks: {} },
+    };
   }
-  return JSON.parse(fs.readFileSync(configPath, 'utf8'));
 }
 
-function writeConfig(data: any) {
-  fs.writeFileSync(configPath, JSON.stringify(data, null, 2));
+function writeConfig(data: AdminConfig) {
+  writeJsonFile(data, FILE);
 }
 
 export async function POST(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
+  const isAdmin = await isAdminAuthenticated();
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -38,7 +46,10 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: 'repoName required' }, { status: 400 });
         }
         data.repoConfig = data.repoConfig || {};
-        data.repoConfig[repoName] = { ...data.repoConfig[repoName], ...config };
+        data.repoConfig[repoName] = {
+          ...(data.repoConfig[repoName] as object),
+          ...config,
+        };
         writeConfig(data);
         return NextResponse.json({ success: true });
       }
@@ -65,7 +76,10 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: 'index required' }, { status: 400 });
         }
         data.customProjects = data.customProjects || [];
-        data.customProjects[index] = { ...data.customProjects[index], ...config };
+        data.customProjects[index] = {
+          ...(data.customProjects[index] as object),
+          ...config,
+        };
         writeConfig(data);
         return NextResponse.json({ success: true });
       }
@@ -80,6 +94,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
+    const { body, status } = persistErrorResponse(error);
+    if (status === 503) return NextResponse.json(body, { status });
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

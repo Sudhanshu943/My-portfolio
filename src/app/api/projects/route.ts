@@ -1,72 +1,74 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { isAdminAuthenticated } from '@/lib/admin-session';
+import {
+  persistErrorResponse,
+  readJsonFile,
+  writeJsonFile,
+} from '@/lib/data-store';
 
-const filePath = path.join(process.cwd(), 'src/data/projects.json');
-
-async function verifyAdmin() {
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get('admin_session');
-  return adminSession?.value === 'true';
-}
+const FILE = 'projects.json';
 
 export async function GET() {
   try {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return NextResponse.json(JSON.parse(data));
+    return NextResponse.json(readJsonFile(FILE));
   } catch {
     return NextResponse.json({ error: 'Failed to read projects' }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
+  const isAdmin = await isAdminAuthenticated();
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const newProject = await request.json();
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const data = readJsonFile<unknown[]>(FILE);
     data.push(newProject);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    writeJsonFile(data, FILE);
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    const { body, status } = persistErrorResponse(error);
+    if (status === 503) return NextResponse.json(body, { status });
     return NextResponse.json({ error: 'Failed to add project' }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
+  const isAdmin = await isAdminAuthenticated();
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const { index, ...updatedProject } = await request.json();
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const data = readJsonFile<Record<string, unknown>[]>(FILE);
     data[index] = { ...data[index], ...updatedProject };
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    writeJsonFile(data, FILE);
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    const { body, status } = persistErrorResponse(error);
+    if (status === 503) return NextResponse.json(body, { status });
     return NextResponse.json({ error: 'Failed to update project' }, { status: 500 });
   }
 }
 
 export async function DELETE(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
+  const isAdmin = await isAdminAuthenticated();
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const { index } = await request.json();
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const data = readJsonFile<unknown[]>(FILE);
     data.splice(index, 1);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    writeJsonFile(data, FILE);
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    const { body, status } = persistErrorResponse(error);
+    if (status === 503) return NextResponse.json(body, { status });
     return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
   }
 }

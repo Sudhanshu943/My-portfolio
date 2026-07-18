@@ -4,22 +4,22 @@
 
 Located in `src/components/sections/`.
 
-| Component | Description |
-|-----------|-------------|
-| `Navbar` | Top navigation bar with smooth scroll links |
-| `Hero` | Terminal-styled hero section with typing animation |
-| `ProofOfWork` | Display of certifications and proof of work |
-| `SecurityLab` | Security laboratory projects showcase |
-| `CTFWriteups` | Capture The Flag competition writeups |
-| `GitHubStats` | GitHub contribution statistics |
-| `Projects` | Portfolio projects grid with filtering |
-| `Skills` | Skills categorized by type with visual bars |
-| `Timeline` | Career and education timeline |
-| `Education` | Formal education history |
-| `CurrentFocus` | Current learning focus and goals |
-| `SecurityMindset` | Security philosophy and approach |
-| `Contact` | Contact form and social links |
-| `Footer` | Site footer with copyright |
+| Component | Description | Rendering |
+|-----------|-------------|-----------|
+| `Navbar` | Top navigation bar with smooth scroll links | Client |
+| `Hero` | Terminal-styled hero with typing animation | Client |
+| `ProofOfWork` | Certifications and proof of work | Server + FadeIn |
+| `SecurityLab` | Security laboratory showcase | Server + FadeIn |
+| `CTFWriteups` | CTF competition writeups | Server + FadeIn |
+| `GitHubStats` | GitHub contribution statistics | Client |
+| `Projects` | Portfolio projects (GitHub + custom) | Client |
+| `Skills` | Skills by category (SSR from JSON) | Server + FadeIn |
+| `Timeline` | Career timeline | Server + FadeIn |
+| `Education` | Formal education (SSR from JSON) | Server |
+| `CurrentFocus` | Current learning focus | Server + FadeIn |
+| `SecurityMindset` | Security philosophy | Server |
+| `Contact` | Contact form and social links | Client |
+| `Footer` | Site footer | Server |
 
 ## Special Components
 
@@ -27,7 +27,10 @@ Located in `src/components/sections/`.
 |-----------|----------|-------------|
 | `Terminal` | `src/components/terminal/Terminal.tsx` | Full interactive terminal emulator with command processing |
 | `AnimatedBackground` | `src/components/AnimatedBackground.tsx` | Canvas-based particle system with mouse interaction |
-| `BootLoader` | `src/components/ui/BootLoader.tsx` | Boot sequence animation (currently commented out) |
+| `BootLoader` | `src/components/ui/BootLoader.tsx` | Terminal boot sequence animation |
+| `FadeIn` | `src/components/ui/FadeIn.tsx` | Client motion island for scroll-in effects on server sections |
+| `SectionSkeleton` | `src/components/ui/SectionSkeleton.tsx` | Placeholder while dynamic sections load |
+| `HomeShell` | `src/components/ui/HomeShell.tsx` | Optional boot gate (`ENABLE_BOOT_LOADER`) |
 | `AdminDashboard` | `src/components/AdminDashboard.tsx` | Tabbed admin interface for content management |
 | `AdminControls` | `src/components/admin/AdminControls.tsx` | Floating in-page admin editor |
 | `SettingsPanel` | `src/components/admin/SettingsPanel.tsx` | Settings panel within admin interface |

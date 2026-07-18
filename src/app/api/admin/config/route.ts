@@ -1,61 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import fs from 'fs';
-import path from 'path';
+import { isAdminAuthenticated } from '@/lib/admin-session';
+import {
+  DataPersistError,
+  ensureJsonFile,
+  persistErrorResponse,
+  readJsonFile,
+  writeJsonFile,
+} from '@/lib/data-store';
 
-const filePath = path.join(process.cwd(), 'src/data/admin-config.json');
+const FILE = 'admin-config.json';
 
-async function verifyAdmin() {
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get('admin_session');
-  return adminSession?.value === 'true';
-}
+const DEFAULT_CONFIG = {
+  repoConfig: {},
+  customProjects: [],
+  profile: {
+    name: 'Sudhanshu Thapa',
+    bio: '',
+    skills: [],
+    socialLinks: {},
+  },
+};
 
 function ensureFile() {
-  if (!fs.existsSync(filePath)) {
-    const defaultConfig = {
-      repoConfig: {},
-      customProjects: [],
-      profile: {
-        name: "Sudhanshu Thapa",
-        bio: "",
-        skills: [],
-        socialLinks: {}
-      }
-    };
-    fs.writeFileSync(filePath, JSON.stringify(defaultConfig, null, 2));
-  }
+  ensureJsonFile(DEFAULT_CONFIG, FILE);
 }
 
-export async function GET(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
+export async function GET() {
+  const isAdmin = await isAdminAuthenticated();
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     ensureFile();
-    const data = fs.readFileSync(filePath, 'utf8');
-    return NextResponse.json(JSON.parse(data));
-  } catch {
+    return NextResponse.json(readJsonFile(FILE));
+  } catch (error) {
+    if (error instanceof DataPersistError) {
+      const { body, status } = persistErrorResponse(error);
+      return NextResponse.json(body, { status });
+    }
     return NextResponse.json({ error: 'Failed to read config' }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
-  const isAdmin = await verifyAdmin();
+  const isAdmin = await isAdminAuthenticated();
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     ensureFile();
-    const existingData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const existingData = readJsonFile<Record<string, unknown>>(FILE);
     const updates = await request.json();
     const newData = { ...existingData, ...updates };
-    fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));
+    writeJsonFile(newData, FILE);
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    const { body, status } = persistErrorResponse(error);
+    if (status === 503) return NextResponse.json(body, { status });
     return NextResponse.json({ error: 'Failed to update config' }, { status: 500 });
   }
 }

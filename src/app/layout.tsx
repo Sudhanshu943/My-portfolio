@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { config } from "@/data/config";
 import "./globals.css";
 
 const inter = Inter({
@@ -15,8 +16,13 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "[TERMINAL_OS_v1.0] | SUDHANSHU",
-  description: "Cybersecurity Student Portfolio - Terminal OS v1.0",
+  title: `${config.name} | ${config.role}`,
+  description: config.bio,
+  openGraph: {
+    title: `${config.name} | TERMINAL_OS_v1.0`,
+    description: config.bio,
+    type: "website",
+  },
 };
 
 export default function RootLayout({

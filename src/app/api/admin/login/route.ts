@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import {
+  ADMIN_SESSION_COOKIE,
+  createAdminSessionToken,
+  getAdminCookieOptions,
+} from '@/lib/admin-auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,24 +20,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (password !== adminPassword) {
+    if (
+      !process.env.ADMIN_SESSION_SECRET &&
+      !process.env.NEXTAUTH_SECRET
+    ) {
       return NextResponse.json(
-        { error: 'Access Denied' },
-        { status: 401 }
+        {
+          error:
+            'Session secret not configured. Set ADMIN_SESSION_SECRET (or legacy NEXTAUTH_SECRET).',
+        },
+        { status: 500 }
       );
     }
 
+    if (password !== adminPassword) {
+      return NextResponse.json({ error: 'Access Denied' }, { status: 401 });
+    }
+
+    const token = await createAdminSessionToken();
     const cookieStore = await cookies();
-    cookieStore.set('admin_session', 'true', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    });
+    cookieStore.set(ADMIN_SESSION_COOKIE, token, getAdminCookieOptions());
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

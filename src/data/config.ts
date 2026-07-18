@@ -1,17 +1,23 @@
-export const config = {
-  name: "Sudhanshu Thapa",
-  role: "Cybersecurity Student",
-  bio: "Passionate cybersecurity enthusiast focused on ethical hacking, network security, and building secure systems.",
+import siteConfig from './config.json';
+
+export type SiteConfig = {
+  name: string;
+  role: string;
+  bio: string;
   socialLinks: {
-    github: "https://github.com/Sudhanshu943",
-    linkedin: "https://www.linkedin.com/in/sudhanshu-thapa-1827a6272",
-    email: "sudhanshuthapa8@gmail.com",
-  },
-  resume: "/resume.pdf",
-  resumeLastUpdated: "2024-10-01",
+    github: string;
+    linkedin: string;
+    email: string;
+  };
+  resume: string;
+  resumeLastUpdated: string;
+  profilePicture: string;
   currentFocus: {
-    learning: ["Web Security", "Forensics"],
-    next: ["Reverse Engineering", "Malware Analysis"]
-  },
-  securityMindset: "I focus on understanding systems deeply, preferring manual analysis over automated tools. My approach emphasizes problem-solving, documentation, and continuous learning in cybersecurity.",
+    learning: string[];
+    next: string[];
+  };
+  securityMindset: string;
 };
+
+/** Canonical site config — source of truth is `config.json` (admin-editable). */
+export const config: SiteConfig = siteConfig;
